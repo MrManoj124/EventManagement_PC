@@ -14,7 +14,6 @@ const Login = () => {
         </div>
       </header>
       
-
       {/* Main Centered Content */}
       <main className="flex-grow flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
