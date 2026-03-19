@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 const Contact = () => {
   return (
-    <div className="bg-white dark:bg-[#101922] min-h-screen font-sans flex flex-col">
+    <div className="bg-white dark:bg-[#f0f4f8] min-h-screen font-sans flex flex-col">
       {/* Header */}
       <header className="border-b border-slate-100 py-4 px-8 flex justify-between items-center sticky top-0 bg-white/90 backdrop-blur-md z-50">
         <div className="flex items-center gap-2">
