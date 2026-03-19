@@ -127,9 +127,9 @@ const Home = () => {
                         <div className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">schedule</span> {event.time}</div>
                         <div className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">location_on</span> {event.location}</div>
                       </div>
-                      <button className="w-full mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all">
+                      <Link to="/event-register" className="block w-full text-center mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all">
                         Register
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 ))}
