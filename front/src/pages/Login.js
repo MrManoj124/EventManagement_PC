@@ -4,7 +4,6 @@ import { useNavigate, Link } from 'react-router-dom';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // State to toggle password visibility
   const [showPassword, setShowPassword] = useState(false); 
   const navigate = useNavigate();
 
@@ -26,21 +25,17 @@ const Login = () => {
 
   return (
     <div className="bg-[#f6f7f8] min-h-screen font-display flex flex-col">
-      {/* Navbar */}
       <header className="flex items-center justify-between border-b border-slate-200 bg-[#f6f7f8] px-6 md:px-10 py-4">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#137fec] text-white">
             <span className="material-symbols-outlined text-xl">school</span>
           </div>
-          <h2 className="text-black text-lg font-bold tracking-tight">UniEvents</h2>
         </div>
       </header>
 
-      {/* Main Centered Content */}
       <main className="flex-grow flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
           <div className="p-10">
-            {/* Top Icon Circle */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#137fec]/10 mb-4">
                 <span className="material-symbols-outlined text-[#137fec] text-4xl">lock_open</span>
@@ -49,7 +44,6 @@ const Login = () => {
               <p className="text-slate-500 mt-2 text-sm font-medium">Access your university event dashboard</p>
             </div>
 
-            {/* Login Form */}
             <form className="space-y-5" onSubmit={handleLogin}>
               <div>
                 <div className="relative">
@@ -76,19 +70,18 @@ const Login = () => {
                   <input
                     className="w-full pl-10 pr-12 py-3.5 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
                     placeholder="••••••••"
-                    // Dynamic type based on state
+                    // Toggle type between 'password' and 'text'
                     type={showPassword ? "text" : "password"} 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                  {/* Single visibility toggle button */}
                   <button 
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none" 
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" 
                     type="button"
-                    onClick={togglePasswordVisibility}
+                    onClick={togglePasswordVisibility} // Clicking toggles the state
                   >
-                    <span className="material-symbols-outlined select-none">
+                    <span className="material-symbols-outlined">
                       {showPassword ? "visibility_off" : "visibility"} 
                     </span>
                   </button>
@@ -123,3 +116,4 @@ const Login = () => {
 };
 
 export default Login;
+
