@@ -1,11 +1,27 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    
+    // Admin Credential Check
+    if (email === 'admin@university.com' && password === 'admin123') {
+      navigate('/add-event'); 
+    } else {
+      // Normal user redirect to Home
+      navigate('/'); 
+    }
+  };
+
   return (
-    <div className="bg-[#f0f4f8] min-h-screen font-display flex flex-col">
-      {/* Navbar with subtle dark background */}
-      <header className="flex items-center justify-between border-b border-slate-300 bg-white px-6 md:px-10 py-4">
+    <div className="bg-[#f6f7f8] min-h-screen font-display flex flex-col">
+      {/* Navbar */}
+      <header className="flex items-center justify-between border-b border-slate-200 bg-white/80 px-6 md:px-10 py-4">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#137fec] text-white">
             <span className="material-symbols-outlined text-xl">school</span>
@@ -13,8 +29,8 @@ const Login = () => {
           <h2 className="text-black text-lg font-bold tracking-tight">UniEvents</h2>
         </div>
       </header>
-      
-      {/* Main Centered Content */}
+
+      {/* Main Card */}
       <main className="flex-grow flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
           <div className="p-10">
@@ -28,30 +44,36 @@ const Login = () => {
             </div>
 
             {/* Login Form */}
-            <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-5" onSubmit={handleLogin}>
               <div>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">person</span>
                   <input
-                    className="w-full pl-10 pr-4 py-3.5 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] focus:border-transparent outline-none text-slate-900 transition-all placeholder:text-slate-400"
+                    className="w-full pl-10 pr-4 py-3.5 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
                     placeholder="admin@university.com"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                   />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-end mb-1.5">
-                  <Link className="text-xs font-bold text-[#137fec] hover:underline" to="#">
+                  <button type="button" className="text-xs font-bold text-[#137fec] hover:underline">
                     Forgot password?
-                  </Link>
+                  </button>
                 </div>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">lock</span>
                   <input
-                    className="w-full pl-10 pr-12 py-3.5 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] focus:border-transparent outline-none text-slate-900 transition-all placeholder:text-slate-400"
+                    className="w-full pl-10 pr-12 py-3.5 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
                     placeholder="••••••••"
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                   />
                   <button className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" type="button">
                     <span className="material-symbols-outlined">visibility</span>
@@ -88,12 +110,10 @@ const Login = () => {
             </div>
           </div>
           
-          {/* Bottom Branding Strip */}
           <div className="h-1.5 bg-[#137fec] w-full"></div>
         </div>
       </main>
 
-      {/* Simple Footer */}
       <footer className="py-8 text-center text-slate-500 text-xs">
         © 2024 UniEvents Management System. All rights reserved.
       </footer>
@@ -101,4 +121,5 @@ const Login = () => {
   );
 };
 
+// CRITICAL: Ensure this line exists at the very end
 export default Login;

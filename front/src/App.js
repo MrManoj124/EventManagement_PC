@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register'; // Create this using your registration HTML
 import Contact from './pages/Contact';   // Create this using your contact HTML
 import EventRegister from './pages/EventRegister';
+import AddEvent from './pages/AddEvent'; 
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/event-register" element={<EventRegister />} />
+        <Route path="/add-event" element={<AddEvent />} />
       </Routes>
     </Router>
   );
