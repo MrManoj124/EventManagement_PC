@@ -2,3 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide the default eye icon in Edge and Chrome */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
