@@ -14,8 +14,7 @@ const AddEvent = () => {
             <h2 className="text-slate-900 text-lg font-bold leading-tight tracking-tight">UniAdmin Portal</h2>
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <Link to="/admin-dashboard" className="text-slate-600 hover:text-[#137fec] text-sm font-medium transition-colors">Dashboard</Link>
-            
+           {/* <Link to="/admin-dashboard" className="text-slate-600 hover:text-[#137fec] text-sm font-medium transition-colors">Dashboard</Link>*/}
           </nav>
         </div>
 
