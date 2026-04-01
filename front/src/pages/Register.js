@@ -60,7 +60,7 @@ const Register = () => {
 
               {/* University ID */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5 ml-1">University ID</label>
+                <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5 ml-1">Registration Number</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">badge</span>
                   <input
