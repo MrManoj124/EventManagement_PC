@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Register = () => {
+  // States to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   return (
     <div className="bg-[#f0f4f8] min-h-screen font-display flex flex-col">
-      {/* Navbar exactly like the image */}
+      {/* Navbar */}
       <header className="flex items-center justify-between border-b border-slate-300 bg-white px-6 md:px-10 py-4">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#137fec] text-white">
@@ -22,7 +26,6 @@ const Register = () => {
       <main className="flex-grow flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
           <div className="p-10">
-            {/* Title Section */}
             <div className="text-center mb-8">
               <h1 className="text-3xl font-black text-slate-900">Create Your Account</h1>
               <p className="text-slate-500 mt-2 text-sm font-medium">Register to participate in university events</p>
@@ -74,10 +77,19 @@ const Register = () => {
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">lock</span>
                   <input
-                    className="w-full pl-10 pr-4 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
+                    className="w-full pl-10 pr-12 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
                     placeholder="••••••••"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                   />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-[#137fec] focus:outline-none"
+                  >
+                    <span className="material-symbols-outlined text-[20px] select-none">
+                      {showPassword ? "visibility_off" : "visibility"}
+                    </span>
+                  </button>
                 </div>
               </div>
 
@@ -87,10 +99,19 @@ const Register = () => {
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">lock_reset</span>
                   <input
-                    className="w-full pl-10 pr-4 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
+                    className="w-full pl-10 pr-12 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
                     placeholder="••••••••"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                   />
+                  <button 
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-[#137fec] focus:outline-none"
+                  >
+                    <span className="material-symbols-outlined text-[20px] select-none">
+                      {showConfirmPassword ? "visibility_off" : "visibility"}
+                    </span>
+                  </button>
                 </div>
               </div>
 
