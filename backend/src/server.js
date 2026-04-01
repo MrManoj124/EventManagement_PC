@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const { connectDB } = require('./config/db'); // Import your Sequelize config
+const userRoutes = require('./routes/userRoutes');
 
 // Load env vars
 dotenv.config();
@@ -15,6 +16,7 @@ const app = express();
 app.use(cors());
 app.use(express.json()); 
 app.use('/uploads', express.static('src/uploads')); 
+app.use('/api/users', userRoutes);
 
 // Basic Test Route
 app.get('/', (req, res) => {
