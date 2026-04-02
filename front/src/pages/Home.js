@@ -1,3 +1,25 @@
+
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+const Home = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  // Check if user is logged in on component mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/login');
+  };
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -43,7 +65,7 @@ const Home = () => {
 
   return (
     <div className="bg-[#f6f7f8] min-h-screen font-display">
-      {/* Header */}
+
       <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 lg:px-8">
           <div className="flex items-center gap-2">
@@ -52,6 +74,44 @@ const Home = () => {
             </div>
             <span className="text-xl font-bold text-slate-900">UniEvents</span>
           </div>
+          
+          <nav className="hidden md:flex items-center gap-6">
+            <Link to="/" className="text-sm font-medium text-[#137fec]">Home</Link>
+            <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Contact Us</Link>
+            
+            {user ? (
+              /* User Profile Section - Shows when logged in */
+              <div className="flex items-center gap-4 pl-4 border-l border-slate-200">
+                <div className="flex items-center gap-2">
+                  <img 
+                    src={`https://ui-avatars.com/api/?name=${user.full_name}&background=137fec&color=fff&bold=true`} 
+                    alt="Profile" 
+                    className="h-9 w-9 rounded-full border-2 border-white shadow-sm"
+                  />
+                  <div className="hidden lg:block text-left">
+                    <p className="text-xs font-black text-slate-900 leading-none">{user.full_name}</p>
+                    <p className="text-[10px] text-slate-400 font-medium">{user.email}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={handleLogout}
+                  className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                  title="Logout"
+                >
+                  <span className="material-symbols-outlined text-xl">logout</span>
+                </button>
+              </div>
+            ) : (
+              /* Auth Buttons - Shows when logged out */
+              <div className="flex gap-3">
+                <Link to="/register" className="inline-flex items-center justify-center rounded-lg border border-[#137fec] px-5 py-2 text-sm font-semibold text-[#137fec] hover:bg-[#137fec]/10 transition-all">
+                  Register
+                </Link>
+                <Link to="/login" className="inline-flex items-center justify-center rounded-lg bg-[#137fec] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#137fec]/90 transition-all">
+                  Login
+                </Link>
+              </div>
+            )}
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/" className="text-sm font-medium text-[#137fec]">Home</Link>
             <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Contact Us</Link>
@@ -84,6 +144,7 @@ const Home = () => {
             </div>
             <div className="relative">
               <div className="aspect-[4/3] rounded-3xl bg-slate-200 shadow-2xl overflow-hidden">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/072/288/862/small/rock-band-performing-under-red-stage-lights-in-luxury-hotel-photo.jpg" alt="Hero" className="w-full h-full object-cover" />
                 <img src="https://static.vecteezy.com/system/resources/thumbnails/072/288/862/small/rock-band-performing-under-red-stage-lights-in-luxury-hotel-photo.jpg" alt="Students" className="w-full h-full object-cover" />
               </div>
               <div className="absolute -bottom-6 -left-6 rounded-2xl bg-white p-5 shadow-xl border border-slate-100">
@@ -104,7 +165,6 @@ const Home = () => {
         {/* Content Grid */}
         <section className="pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            
             {/* Left: Upcoming Events */}
             <div className="lg:col-span-8">
               <div className="flex items-center justify-between mb-8">
@@ -138,6 +198,7 @@ const Home = () => {
 
             {/* Right: Sidebar */}
             <div className="lg:col-span-4 space-y-8">
+              {/* Calendar Card */}
               {/* Calendar */}
               <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
@@ -151,7 +212,9 @@ const Home = () => {
                 <div className="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 mb-2">
                   <div>SU</div><div>MO</div><div>TU</div><div>WE</div><div>TH</div><div>FR</div><div>SA</div>
                 </div>
+                
                 {/* Simplified Grid Placeholder */}
+
                 <div className="grid grid-cols-7 gap-1 text-sm text-center">
                   {[...Array(31)].map((_, i) => (
                     <div key={i} className={`py-2 rounded-lg ${i + 1 === 15 ? 'bg-[#137fec] text-white font-bold' : 'hover:bg-slate-50'}`}>
@@ -161,6 +224,15 @@ const Home = () => {
                 </div>
               </div>
 
+              {/* Newsletter / Get Notified Card */}
+              <div className="bg-[#137fec] p-8 rounded-2xl text-white shadow-lg shadow-[#137fec]/20">
+                <h3 className="text-xl font-bold mb-2">Get Notified</h3>
+                <p className="text-sm text-white/80 mb-6 leading-relaxed">Subscribe to our newsletter for weekly event schedules directly in your inbox.</p>
+                <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+                  <input className="w-full px-4 py-3 rounded-xl bg-white/10 border-none placeholder:text-white/60 text-sm focus:ring-2 focus:ring-white outline-none" placeholder="student@university.edu" type="email" required />
+                  <button className="w-full py-3 bg-white text-[#137fec] font-bold rounded-xl shadow-sm hover:bg-slate-50 transition-all">Subscribe</button>
+                </form>
+              </div>
               {/* Newsletter */}
               {/* <div className="bg-[#137fec] p-8 rounded-2xl text-white shadow-lg shadow-[#137fec]/20">
                 <h3 className="text-xl font-bold mb-2">Get Notified</h3>
@@ -170,6 +242,7 @@ const Home = () => {
                   <button className="w-full py-3 bg-white text-[#137fec] font-bold rounded-xl shadow-sm hover:bg-slate-50 transition-all">Subscribe</button>
                 </div>
               </div> */}
+
             </div>
           </div>
         </section>
@@ -199,6 +272,9 @@ const Home = () => {
           <div>
             <h4 className="font-bold mb-6">Admin</h4>
             <ul className="space-y-3 text-sm text-slate-500">
+
+              <li><Link to="/login">Admin Login</Link></li>
+              <li><Link to="/add-event">Create Event</Link></li>
               <li><Link to="#">Admin Login</Link></li>
               <li><Link to="#">Create Event</Link></li>
               <li><Link to="#">Analytics</Link></li>

@@ -1,11 +1,46 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
+import axios from 'axios';
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); 
   const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    // 1. Admin Default Login Check
+    if (email === 'admin@university.com' && password === 'admin123') {
+      // Mock admin object for local storage
+      const adminData = {
+        full_name: 'Admin User',
+        email: 'admin@university.com',
+        role: 'admin'
+      };
+      localStorage.setItem('user', JSON.stringify(adminData));
+      navigate('/add-event'); 
+      return;
+    }
+
+    // 2. Student MySQL Login Check
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/login', {
+        email,
+        password
+      });
+
+      if (response.data) {
+        // Store user data in localStorage (this includes full_name for profile pic generation)
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        // Redirect to Home page
+        navigate('/'); 
+      }
+    } catch (error) {
+      // Handle error (e.g., user not found or wrong password)
+      alert(error.response?.data?.message || "Login failed. Please check your credentials.");
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -13,6 +48,7 @@ const Login = () => {
       navigate('/add-event'); 
     } else {
       navigate('/'); 
+
     }
   };
 
@@ -48,6 +84,7 @@ const Login = () => {
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">person</span>
                   <input
                     className="w-full pl-10 pr-4 py-3.5 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
+                    placeholder="University Email"
                     placeholder="admin@university.com"
                     type="email"
                     value={email}
@@ -73,6 +110,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
+
                   {/* Custom Toggle Button */}
                   <button 
                     className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-slate-600 focus:outline-none" 

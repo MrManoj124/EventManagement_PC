@@ -1,3 +1,54 @@
+
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const Register = () => {
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // State for form inputs
+  const [formData, setFormData] = useState({
+    full_name: '',
+    email: '',
+    registration_number: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/register', {
+        full_name: formData.full_name,
+        email: formData.email,
+        registration_number: formData.registration_number,
+        password: formData.password
+      });
+
+      if (response.status === 201) {
+        alert("Registration Successful! Please login.");
+        navigate('/login'); // Redirect to login page
+      }
+    } catch (error) {
+      alert(error.response?.data?.error || "Registration failed. Email might already exist.");
+    }
+  };
+
+  return (
+    <div className="bg-[#f0f4f8] min-h-screen font-display flex flex-col">
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -18,16 +69,22 @@ const Register = () => {
         </nav>
       </header>
 
+      <main className="flex-grow flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+          <div className="p-10">
+
       {/* Main Registration Content */}
       <main className="flex-grow flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
           <div className="p-10">
             {/* Title Section */}
+
             <div className="text-center mb-8">
               <h1 className="text-3xl font-black text-slate-900">Create Your Account</h1>
               <p className="text-slate-500 mt-2 text-sm font-medium">Register to participate in university events</p>
             </div>
 
+            <form className="space-y-4" onSubmit={handleRegister}>
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               {/* Full Name */}
               <div>
@@ -35,6 +92,13 @@ const Register = () => {
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">person</span>
                   <input
+                    name="full_name"
+                    value={formData.full_name}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all"
+                    placeholder="Enter your full name"
+                    type="text"
+                    required
                     className="w-full pl-10 pr-4 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
                     placeholder="Enter your full name"
                     type="text"
@@ -43,17 +107,40 @@ const Register = () => {
               </div>
 
               {/* University Email */}
+
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5 ml-1">University Email</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">mail</span>
                   <input
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all"
+                    placeholder="e.g. student@university.edu"
+                    type="email"
+                    required
+
                     className="w-full pl-10 pr-4 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
                     placeholder="e.g. student@university.edu"
                     type="email"
+
                   />
                 </div>
               </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5 ml-1">Registration Number</label>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">badge</span>
+                  <input
+                    name="registration_number"
+                    value={formData.registration_number}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all"
+                    placeholder="Enter your registration number"
+                    type="text"
+                    required
 
               {/* University ID */}
               <div>
@@ -69,11 +156,33 @@ const Register = () => {
               </div>
 
               {/* Password */}
+
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5 ml-1">Password</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">lock</span>
                   <input
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-12 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all"
+                    placeholder="••••••••"
+                    type={showPassword ? "text" : "password"}
+                    required
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-[#137fec] focus:outline-none"
+                  >
+                    <span className="material-symbols-outlined text-[20px] select-none">
+                      {showPassword ? "visibility_off" : "visibility"}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+
                     className="w-full pl-10 pr-4 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
                     placeholder="••••••••"
                     type="password"
@@ -82,15 +191,36 @@ const Register = () => {
               </div>
 
               {/* Confirm Password */}
+
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5 ml-1">Confirm Password</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">lock_reset</span>
                   <input
+
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-12 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all"
+                    placeholder="••••••••"
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-[#137fec] focus:outline-none"
+                  >
+                    <span className="material-symbols-outlined text-[20px] select-none">
+                      {showConfirmPassword ? "visibility_off" : "visibility"}
+                    </span>
+                  </button>
+
                     className="w-full pl-10 pr-4 py-3 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
                     placeholder="••••••••"
                     type="password"
                   />
+
                 </div>
               </div>
 
@@ -111,8 +241,9 @@ const Register = () => {
               </p>
             </div>
           </div>
-          
+
           {/* Card Footer */}
+
           <div className="bg-slate-50 py-4 flex justify-center gap-6 border-t border-slate-100">
             <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               <span className="material-symbols-outlined text-sm">verified_user</span> Secure Registration
