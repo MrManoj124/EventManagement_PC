@@ -2,7 +2,6 @@ const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
 
 dotenv.config();
-
 // Create the Sequelize instance for XAMPP MySQL
 const sequelize = new Sequelize(
   process.env.DB_NAME || 'unievents_db', // Ensure this matches your XAMPP DB name
@@ -18,6 +17,16 @@ const sequelize = new Sequelize(
       acquire: 30000,
       idle: 10000
     }
+
+// Create a connection instance
+const sequelize = new Sequelize(
+  process.env.DB_NAME,     // Database name
+  process.env.DB_USER,     // Username (usually 'root')
+  process.env.DB_PASSWORD, // Password
+  {
+    host: process.env.DB_HOST,
+    dialect: 'mysql',      // Change to 'postgres' if using PostgreSQL
+    logging: false,        // Keeps the console clean
   }
 );
 
@@ -38,6 +47,14 @@ const connectDB = async () => {
     console.error('❌ Unable to connect to the XAMPP MySQL database:', error);
     // Suggesting a common fix for XAMPP users
     console.log('💡 Tip: Ensure Apache and MySQL are started in your XAMPP Control Panel.');
+    await sequelize.authenticate();
+    console.log('✅ SQL Database Connected Successfully.');
+    
+    // Sync models to database (creates tables automatically)
+    await sequelize.sync({ alter: true }); 
+    console.log('✅ All SQL tables synchronized.');
+  } catch (error) {
+    console.error('❌ Unable to connect to the SQL database:', error);
     process.exit(1);
   }
 };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+
 import axios from 'axios';
 
 const Login = () => {
@@ -40,6 +41,14 @@ const Login = () => {
     } catch (error) {
       // Handle error (e.g., user not found or wrong password)
       alert(error.response?.data?.message || "Login failed. Please check your credentials.");
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (email === 'admin@university.com' && password === 'admin123') {
+      navigate('/add-event'); 
+    } else {
+      navigate('/'); 
+
     }
   };
 
@@ -76,6 +85,7 @@ const Login = () => {
                   <input
                     className="w-full pl-10 pr-4 py-3.5 bg-[#f0f4f8] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 transition-all placeholder:text-slate-400"
                     placeholder="University Email"
+                    placeholder="admin@university.com"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -100,6 +110,8 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
+
+                  {/* Custom Toggle Button */}
                   <button 
                     className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 hover:text-slate-600 focus:outline-none" 
                     type="button"
