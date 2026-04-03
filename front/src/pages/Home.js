@@ -89,12 +89,12 @@ const Home = () => {
                   </div>
                 </div>
                 <button 
-                  onClick={handleLogout}
-                  className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-                  title="Logout"
-                >
-                  <span className="material-symbols-outlined text-xl">logout</span>
-                </button>
+              onClick={handleLogout}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-all font-bold text-xs"
+            >
+              <span className="material-symbols-outlined text-sm">logout</span>
+              Logout
+            </button>
               </div>
             ) : (
               /* Auth Buttons - Shows when logged out */

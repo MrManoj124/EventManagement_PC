@@ -48,10 +48,6 @@ const AddEvent = () => {
               type="text"
             />
           </div>
-          <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg relative">
-            <span className="material-symbols-outlined">notifications</span>
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-          </button>
           
           {/* Admin Profile & Logout */}
           <div className="flex items-center gap-4 pl-4 border-l border-slate-100">
@@ -164,7 +160,7 @@ const AddEvent = () => {
             </div>
           </div>
 
-          {/* Right Column: Upcoming Events List */}
+          {/* Right Column: Upcoming Events List (NO IMAGES) */}
           <div className="lg:col-span-7">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
@@ -176,33 +172,44 @@ const AddEvent = () => {
               </span>
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-4">
               {[
-                { name: 'Annual Tech Symposium', cat: 'Academic', date: 'Oct 15, 2024', loc: 'Innovation Lab', reg: '250 Registered', img: 'https://images.unsplash.com/photo-1540575861501-7ad05823c9f5?w=400' },
-                { name: 'Harmony Night 2024', cat: 'Cultural', date: 'Oct 22, 2024', loc: 'Open Theater', reg: '1.2k Registered', img: 'https://images.unsplash.com/photo-1514525253361-bee8d48700ef?w=400' },
-                { name: 'UI/UX Masterclass', cat: 'Workshop', date: 'Nov 02, 2024', loc: 'Design Studio', reg: '45 Registered', img: 'https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?w=400' }
+                { name: 'Annual Tech Symposium', cat: 'Academic', date: 'Oct 15, 2024', loc: 'Innovation Lab', reg: '250 Registered' },
+                { name: 'Harmony Night 2024', cat: 'Cultural', date: 'Oct 22, 2024', loc: 'Open Theater', reg: '1.2k Registered' },
+                { name: 'UI/UX Masterclass', cat: 'Workshop', date: 'Nov 02, 2024', loc: 'Design Studio', reg: '45 Registered' }
               ].map((event, i) => (
-                <div key={i} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex gap-6 group hover:border-[#137fec]/30 transition-all">
-                  <div className="w-28 h-28 rounded-xl overflow-hidden shrink-0 border border-slate-100">
-                    <img alt={event.name} className="w-full h-full object-cover" src={event.img}/>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <span className="inline-block px-2.5 py-1 rounded bg-blue-50 text-[#137fec] text-[9px] font-black uppercase mb-1.5 tracking-wider">
-                          {event.cat}
-                        </span>
-                        <h3 className="font-black text-slate-900 text-lg">{event.name}</h3>
-                      </div>
-                      <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-2 text-slate-400 hover:text-[#137fec] hover:bg-slate-50 rounded-xl transition-all"><span className="material-symbols-outlined text-lg">edit</span></button>
-                        <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><span className="material-symbols-outlined text-lg">delete</span></button>
-                      </div>
+                <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm group hover:border-[#137fec]/30 transition-all">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <span className="inline-block px-2.5 py-1 rounded bg-blue-50 text-[#137fec] text-[9px] font-black uppercase mb-2 tracking-wider">
+                        {event.cat}
+                      </span>
+                      <h3 className="font-black text-slate-900 text-xl tracking-tight leading-none group-hover:text-[#137fec] transition-colors">
+                        {event.name}
+                      </h3>
                     </div>
-                    <div className="flex flex-wrap gap-5 mt-4 text-xs font-bold text-slate-400">
-                      <div className="flex items-center gap-1.5"><span className="material-symbols-outlined text-sm">calendar_today</span> {event.date}</div>
-                      <div className="flex items-center gap-1.5"><span className="material-symbols-outlined text-sm">location_on</span> {event.loc}</div>
-                      <div className="flex items-center gap-1.5"><span className="material-symbols-outlined text-sm">group</span> {event.reg}</div>
+                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="p-2 text-slate-400 hover:text-[#137fec] hover:bg-slate-50 rounded-xl transition-all">
+                        <span className="material-symbols-outlined text-lg">edit</span>
+                      </button>
+                      <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                        <span className="material-symbols-outlined text-lg">delete</span>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-6 text-xs font-bold text-slate-400">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-sm text-[#137fec]">calendar_today</span> 
+                      {event.date}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-sm text-[#137fec]">location_on</span> 
+                      {event.loc}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-sm text-[#137fec]">group</span> 
+                      {event.reg}
                     </div>
                   </div>
                 </div>
