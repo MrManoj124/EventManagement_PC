@@ -1,7 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
 const AddEvent = () => {
+  const navigate = useNavigate();
+  const [adminUser, setAdminUser] = useState(null);
+
+  // Security Check: Redirect if not logged in as Admin
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.email !== 'admin@university.com' || user.role !== 'admin') {
+      alert("Access Denied: Admin privileges required.");
+      navigate('/login');
+    } else {
+      setAdminUser(user);
+    }
+  }, [navigate]);
+
+  // Logout Handler
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
+  // Prevent UI flicker while checking auth
+  if (!adminUser) return null;
+
   return (
     <div className="bg-[#f6f7f8] min-h-screen font-display flex flex-col text-slate-900">
       {/* Navigation Bar */}
@@ -13,9 +37,6 @@ const AddEvent = () => {
             </div>
             <h2 className="text-slate-900 text-lg font-bold leading-tight tracking-tight">UniAdmin Portal</h2>
           </div>
-          <nav className="hidden md:flex items-center gap-6">
-           {/* <Link to="/admin-dashboard" className="text-slate-600 hover:text-[#137fec] text-sm font-medium transition-colors">Dashboard</Link>*/}
-          </nav>
         </div>
 
         <div className="flex flex-1 justify-end gap-4 items-center">
@@ -31,12 +52,29 @@ const AddEvent = () => {
             <span className="material-symbols-outlined">notifications</span>
             <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
           </button>
-          <div className="h-9 w-9 rounded-full bg-[#137fec]/20 border border-[#137fec]/30 overflow-hidden">
-            <img 
-              alt="Admin Profile" 
-              className="w-full h-full object-cover" 
-              src="https://ui-avatars.com/api/?name=Admin&background=137fec&color=fff"
-            />
+          
+          {/* Admin Profile & Logout */}
+          <div className="flex items-center gap-4 pl-4 border-l border-slate-100">
+            <div className="flex items-center gap-2 text-right">
+              <div className="hidden lg:block">
+                <p className="text-[11px] font-black text-slate-900 leading-none uppercase tracking-tighter">Administrator</p>
+                <p className="text-[10px] text-slate-400 font-medium">{adminUser.email}</p>
+              </div>
+              <div className="h-9 w-9 rounded-full bg-[#137fec]/20 border border-[#137fec]/30 overflow-hidden">
+                <img 
+                  alt="Admin" 
+                  className="w-full h-full object-cover" 
+                  src={`https://ui-avatars.com/api/?name=Admin&background=137fec&color=fff&bold=true`}
+                />
+              </div>
+            </div>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-all font-bold text-xs"
+            >
+              <span className="material-symbols-outlined text-sm">logout</span>
+              Logout
+            </button>
           </div>
         </div>
       </header>
@@ -64,68 +102,50 @@ const AddEvent = () => {
               </div>
 
               <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
-                {/* Event Name */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Event Name</label>
                   <input 
-                    className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] focus:border-transparent p-3.5 text-sm transition-all outline-none" 
+                    className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] p-3.5 text-sm transition-all outline-none" 
                     placeholder="e.g. Graduate Career Fair 2024" 
                     type="text"
                   />
                 </div>
 
-                {/* Image Upload Field */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Event Image</label>
                   <div className="relative group">
-                    <div className="w-full flex items-center justify-between rounded-xl border border-slate-200 bg-[#f8fafc] p-3.5 text-sm transition-all group-hover:border-[#137fec]/30">
-                      <div className="flex items-center gap-3">
-                        <span className="material-symbols-outlined text-slate-400">image</span>
-                        <span className="text-slate-400">Choose event banner...</span>
+                    <div className="w-full flex items-center justify-between rounded-xl border border-slate-200 bg-[#f8fafc] p-3.5 text-sm group-hover:border-[#137fec]/30 transition-all">
+                      <div className="flex items-center gap-3 text-slate-400">
+                        <span className="material-symbols-outlined">image</span>
+                        <span>Choose banner...</span>
                       </div>
-                      <input 
-                        type="file" 
-                        accept="image/*"
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      />
-                      <button type="button" className="bg-[#137fec] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg">
-                        Browse
-                      </button>
+                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" />
+                      <button type="button" className="bg-[#137fec] text-white text-[10px] font-black uppercase px-3 py-1.5 rounded-lg">Browse</button>
                     </div>
                   </div>
-                  <p className="text-[10px] text-slate-400 mt-2 ml-1 font-bold italic">* Recommended: 1200x800px (JPG/PNG)</p>
                 </div>
 
-                {/* Date & Time */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Date</label>
-                    <input className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] p-3.5 text-sm outline-none" type="date"/>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Time</label>
-                    <input className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] p-3.5 text-sm outline-none" type="time"/>
-                  </div>
+                  <input className="w-full rounded-xl border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none" type="date"/>
+                  <input className="w-full rounded-xl border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none" type="time"/>
                 </div>
 
-                {/* Venue */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Venue</label>
-                  <select className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] p-3.5 text-sm outline-none appearance-none">
+                  <select className="w-full rounded-xl border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none appearance-none">
                     <option>Main Auditorium</option>
                     <option>Tech Plaza</option>
                     <option>Science Block C Hall</option>
                   </select>
                 </div>
 
-                {/* Category */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Category</label>
                   <div className="flex flex-wrap gap-2">
                     {['Academic', 'Cultural', 'Sports', 'Workshop'].map((cat, idx) => (
                       <label key={cat} className="cursor-pointer">
                         <input className="peer sr-only" name="category" type="radio" defaultChecked={idx === 0}/>
-                        <span className="px-5 py-2.5 rounded-full border border-slate-200 text-xs font-bold text-slate-500 peer-checked:bg-[#137fec] peer-checked:text-white peer-checked:border-[#137fec] transition-all block">
+                        <span className="px-5 py-2.5 rounded-full border border-slate-200 text-xs font-bold text-slate-500 peer-checked:bg-[#137fec] peer-checked:text-white peer-checked:border-[#137fec] transition-all block text-center">
                           {cat}
                         </span>
                       </label>
@@ -133,18 +153,8 @@ const AddEvent = () => {
                   </div>
                 </div>
 
-                {/* Description */}
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Description</label>
-                  <textarea 
-                    className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] p-3.5 text-sm outline-none resize-none" 
-                    placeholder="Briefly describe the event purpose..." 
-                    rows="3"
-                  ></textarea>
-                </div>
-
                 <button 
-                  className="w-full bg-[#137fec] hover:bg-[#116ecf] text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-[#137fec]/20 transition-all active:scale-[0.98] mt-2" 
+                  className="w-full bg-[#137fec] hover:bg-[#116ecf] text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-[#137fec]/20 transition-all active:scale-[0.98] mt-4" 
                   type="submit"
                 >
                   <span className="material-symbols-outlined">add_circle</span>
@@ -154,7 +164,7 @@ const AddEvent = () => {
             </div>
           </div>
 
-          {/* Right Column: Events List */}
+          {/* Right Column: Upcoming Events List */}
           <div className="lg:col-span-7">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
@@ -185,12 +195,8 @@ const AddEvent = () => {
                         <h3 className="font-black text-slate-900 text-lg">{event.name}</h3>
                       </div>
                       <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-2 text-slate-400 hover:text-[#137fec] hover:bg-slate-50 rounded-xl transition-all">
-                          <span className="material-symbols-outlined text-lg">edit</span>
-                        </button>
-                        <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
-                          <span className="material-symbols-outlined text-lg">delete</span>
-                        </button>
+                        <button className="p-2 text-slate-400 hover:text-[#137fec] hover:bg-slate-50 rounded-xl transition-all"><span className="material-symbols-outlined text-lg">edit</span></button>
+                        <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><span className="material-symbols-outlined text-lg">delete</span></button>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-5 mt-4 text-xs font-bold text-slate-400">
@@ -207,7 +213,7 @@ const AddEvent = () => {
       </main>
 
       <footer className="mt-auto border-t border-slate-200 py-8 bg-white text-center">
-        <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest">
+        <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest leading-relaxed">
           © 2024 University Administration Portal • Event Management Module v2.4.0
         </p>
       </footer>
