@@ -11,9 +11,8 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // 1. Admin Default Login Check
+    // 1. Admin Default Login Check (Hardcoded as requested)
     if (email === 'admin@university.com' && password === 'admin123') {
-      // Mock admin object for local storage
       const adminData = {
         full_name: 'Admin User',
         email: 'admin@university.com',
@@ -32,7 +31,7 @@ const Login = () => {
       });
 
       if (response.data) {
-        // Store user data in localStorage (this includes full_name for profile pic generation)
+        // Store user data in localStorage (this allows Home.js to show the profile)
         localStorage.setItem('user', JSON.stringify(response.data.user));
         // Redirect to Home page
         navigate('/'); 
