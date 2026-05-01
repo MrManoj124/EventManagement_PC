@@ -18,7 +18,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/event-register" element={<EventRegister />} />
         <Route path="/add-event" element={<AddEvent />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} /> 
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </Router>
   );
