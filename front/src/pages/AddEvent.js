@@ -7,9 +7,10 @@ const AddEvent = () => {
   const [adminUser, setAdminUser] = useState(null);
   const [eventsList, setEventsList] = useState([]);
   
-  // Form State (Description field removed)
+  // Form State (Updated with eventImage field)
   const [formData, setFormData] = useState({
     eventName: '',
+    eventImage: '', 
     date: '',
     time: '',
     venue: 'Main Auditorium',
@@ -49,6 +50,7 @@ const AddEvent = () => {
         alert("Event published successfully!");
         setFormData({
           eventName: '',
+          eventImage: '',
           date: '',
           time: '',
           venue: 'Main Auditorium',
@@ -150,6 +152,23 @@ const AddEvent = () => {
                     type="text"
                     required
                   />
+                </div>
+
+                {/* Event Image URL Field */}
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Event Image URL</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">image</span>
+                    <input 
+                      name="eventImage"
+                      value={formData.eventImage}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] pl-10 pr-4 py-3.5 text-sm transition-all outline-none text-slate-900 placeholder:text-slate-400" 
+                      placeholder="https://example.com/banner.jpg" 
+                      type="url"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
