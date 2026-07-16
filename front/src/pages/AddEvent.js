@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 const AddEvent = () => {
@@ -139,8 +139,19 @@ const AddEvent = () => {
           </div>
         </div>
 
-        <div className="flex flex-1 justify-end gap-4 items-center">
-          <div className="flex items-center gap-4 pl-4 border-l border-slate-100">
+        {/* Action controls panel on the right side */}
+        <div className="flex flex-1 justify-end gap-6 items-center">
+          
+          {/* Home Link Navigation positioned cleanly on the right side near profile */}
+          <Link 
+            to="/" 
+            className="text-xs font-bold text-slate-500 hover:text-[#137fec] transition-colors flex items-center gap-1 uppercase tracking-wider pr-2"
+          >
+            <span className="material-symbols-outlined text-sm">home</span>
+            Home
+          </Link>
+
+          <div className="flex items-center gap-4 pl-4 border-l border-slate-200">
             <div className="flex items-center gap-2 text-right">
               <div className="hidden lg:block">
                 <p className="text-[11px] font-black text-slate-900 leading-none uppercase tracking-tighter">Administrator</p>
@@ -298,7 +309,6 @@ const AddEvent = () => {
                         </h3>
                       </div>
                       
-                      {/* Interactive Controls */}
                       <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button onClick={() => startEditing(event)} className="p-2 text-slate-400 hover:text-[#137fec] hover:bg-slate-50 rounded-xl transition-all">
                           <span className="material-symbols-outlined text-lg">edit</span>
@@ -367,7 +377,7 @@ const AddEvent = () => {
                     name="eventImage"
                     value={editingEvent.eventImage}
                     onChange={handleEditInputChange}
-                    className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] pl-10 pr-4 py-3.5 text-sm outline-none" 
+                    className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] pl-10 pr-4 py-3.5 text-sm transition-all outline-none" 
                     type="url"
                     required
                   />
