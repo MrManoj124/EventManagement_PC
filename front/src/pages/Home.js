@@ -1,62 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Home = () => {
   const [user, setUser] = useState(null);
+  const [liveEvents, setLiveEvents] = useState([]); // Array state for database records
   const navigate = useNavigate();
 
-  // Check if user is logged in on component mount
+  // Check if user is logged in & fetch live database events on component mount
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+
+    fetchLiveEvents();
   }, []);
+
+  const fetchLiveEvents = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/events/all');
+      setLiveEvents(response.data);
+    } catch (error) {
+      console.error("Error connecting to live events endpoint:", error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     setUser(null);
     navigate('/login');
   };
-
-  const events = [
-    {
-      id: 1,
-      title: "Tech Symposium 2024",
-      date: "Oct 15, 2024",
-      time: "10:00 AM - 4:00 PM",
-      location: "Main Auditorium",
-      category: "TECH",
-      img: "https://www.financialexecutives.org/Network/Chapters/Dallas/Files/Online-Registration-Graphic-Tech-Symposium.aspx"
-    },
-    {
-      id: 2,
-      title: "Annual Art Exhibition",
-      date: "Oct 18, 2024",
-      time: "02:00 PM - 8:00 PM",
-      location: "University Art Gallery",
-      category: "ARTS",
-      img: "https://visitbrookingssd.com/wp-content/uploads/2024/07/49th-Annual-Fine-Art.jpg"
-    },
-    {
-      id: 3,
-      title: "Inter-College Sports Meet",
-      date: "Oct 22, 2024",
-      time: "09:00 AM - 5:00 PM",
-      location: "Sports Complex",
-      category: "SPORTS",
-      img: "https://images.unsplash.com/photo-1504450758481-7338eba7524a?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: 4,
-      title: "Annual Career Fair",
-      date: "Oct 25, 2024",
-      time: "11:00 AM - 3:00 PM",
-      location: "Student Union Building",
-      category: "CAREER",
-      img: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=800&q=80"
-    }
-  ];
 
   return (
     <div className="bg-[#f6f7f8] min-h-screen font-display">
@@ -89,12 +63,12 @@ const Home = () => {
                   </div>
                 </div>
                 <button 
-              onClick={handleLogout}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-all font-bold text-xs"
-            >
-              <span className="material-symbols-outlined text-sm">logout</span>
-              Logout
-            </button>
+                  onClick={handleLogout}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-all font-bold text-xs"
+                >
+                  <span className="material-symbols-outlined text-sm">logout</span>
+                  Logout
+                </button>
               </div>
             ) : (
               /* Auth Buttons - Shows when logged out */
@@ -136,7 +110,7 @@ const Home = () => {
                     <span className="material-symbols-outlined">check_circle</span>
                   </div>
                   <div>
-                    <p className="text-sm font-bold">12 Active Events Today</p>
+                    <p className="text-sm font-bold">{liveEvents.length} Active Events</p>
                     <p className="text-xs text-slate-500">Join the community</p>
                   </div>
                 </div>
@@ -148,35 +122,57 @@ const Home = () => {
         {/* Content Grid */}
         <section className="pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Left: Upcoming Events */}
+            {/* Left: Dynamic Upcoming Events List */}
             <div className="lg:col-span-8">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-bold text-slate-900">Upcoming Events</h2>
                 <button className="text-sm font-bold text-[#137fec] hover:underline">View all</button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {events.map((event) => (
-                  <div key={event.id} className="group bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-all">
-                    <div className="relative aspect-video">
-                      <img src={event.img} alt={event.title} className="w-full h-full object-cover" />
-                      <div className="absolute top-3 right-3 bg-white/90 px-2 py-1 rounded text-[10px] font-black text-[#137fec]">
-                        {event.category}
+              
+              {liveEvents.length === 0 ? (
+                <div className="text-center p-12 bg-white rounded-2xl border border-slate-100 font-bold text-slate-400">
+                  No active events listed on the dashboard yet.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {liveEvents.map((event) => (
+                    <div key={event.id} className="group bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-all">
+                      <div className="relative aspect-video">
+                        <img 
+                          src={event.eventImage || "https://images.unsplash.com/photo-1540575861501-7ad05823c9f5?w=800"} 
+                          alt={event.eventName} 
+                          className="w-full h-full object-cover" 
+                        />
+                        <div className="absolute top-3 right-3 bg-white/90 px-2 py-1 rounded text-[10px] font-black text-[#137fec] uppercase tracking-wider">
+                          {event.category}
+                        </div>
+                      </div>
+                      <div className="p-5">
+                        <h3 className="font-bold text-lg mb-3 group-hover:text-[#137fec] transition-colors line-clamp-1">
+                          {event.eventName}
+                        </h3>
+                        <div className="space-y-2 text-sm text-slate-500">
+                          <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-sm">calendar_today</span> 
+                            {event.date}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-sm">schedule</span> 
+                            {event.time}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-sm">location_on</span> 
+                            {event.venue}
+                          </div>
+                        </div>
+                        <Link to="/event-register" className="block w-full text-center mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all">
+                          Register
+                        </Link>
                       </div>
                     </div>
-                    <div className="p-5">
-                      <h3 className="font-bold text-lg mb-3 group-hover:text-[#137fec] transition-colors">{event.title}</h3>
-                      <div className="space-y-2 text-sm text-slate-500">
-                        <div className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">calendar_today</span> {event.date}</div>
-                        <div className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">schedule</span> {event.time}</div>
-                        <div className="flex items-center gap-2"><span className="material-symbols-outlined text-sm">location_on</span> {event.location}</div>
-                      </div>
-                      <Link to="/event-register" className="block w-full text-center mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all">
-                        Register
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Right: Sidebar */}
@@ -264,4 +260,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Home; 
