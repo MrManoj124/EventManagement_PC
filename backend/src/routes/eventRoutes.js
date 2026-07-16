@@ -2,22 +2,26 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/Event');
 
-// Publish a New Event (Description Removed)
+// Publish a New Event
 router.post('/add', async (req, res) => {
   try {
-    // Now receiving eventImage from the form
     const { eventName, eventImage, date, time, venue, category } = req.body;
+
+    // Validate incoming required parameters
+    if (!eventName || !date || !time || !venue) {
+      return res.status(400).json({ error: "Missing required event registration fields." });
+    }
 
     const newEvent = await Event.create({
       eventName,
-      eventImage, // Save the actual URL provided
+      eventImage: eventImage || "https://images.unsplash.com/photo-1540575861501-7ad05823c9f5?w=800", // Fallback placeholder if empty
       date,
       time,
       venue,
       category
     });
 
-    res.status(201).json({ message: "Event published!", event: newEvent });
+    res.status(201).json({ message: "Event published successfully!", event: newEvent });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
