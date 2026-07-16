@@ -55,6 +55,15 @@ const Login = () => {
           </div>
           <h2 className="text-black text-lg font-bold tracking-tight">UniEvents</h2>
         </div>
+        
+        {/* Home Link Navigation positioned in the right corner of the header */}
+        <Link 
+          to="/" 
+          className="text-sm font-medium text-slate-800 hover:text-[#137fec] transition-colors flex items-center gap-1 uppercase tracking-wider"
+        >
+          <span className="material-symbols-outlined text-sm">home</span>
+          Home
+        </Link>
       </header>
 
       <main className="flex-grow flex items-center justify-center px-4 py-12">
@@ -86,7 +95,8 @@ const Login = () => {
               <div>
                 <div className="flex justify-end mb-1.5">
                   <Link to="/forgot-password" size="button" className="text-xs font-bold text-[#137fec] hover:underline">
-                  Forgot password?</Link>
+                    Forgot password?
+                  </Link>
                 </div>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">lock</span>
@@ -137,4 +147,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login; 
