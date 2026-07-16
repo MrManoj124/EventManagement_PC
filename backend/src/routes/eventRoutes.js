@@ -2,32 +2,31 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/Event');
 
-// Publish a New Event
+// 1. PUBLISH AN EVENT
 router.post('/add', async (req, res) => {
   try {
     const { eventName, eventImage, date, time, venue, category } = req.body;
 
-    // Validate incoming required parameters
     if (!eventName || !date || !time || !venue) {
-      return res.status(400).json({ error: "Missing required event registration fields." });
+      return res.status(400).json({ error: "Missing required event fields." });
     }
 
     const newEvent = await Event.create({
       eventName,
-      eventImage: eventImage || "https://images.unsplash.com/photo-1540575861501-7ad05823c9f5?w=800", // Fallback placeholder if empty
+      eventImage, 
       date,
       time,
       venue,
       category
     });
 
-    res.status(201).json({ message: "Event published successfully!", event: newEvent });
+    res.status(201).json({ message: "Event published!", event: newEvent });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Fetch All Events
+// 2. FETCH ALL EVENTS
 router.get('/all', async (req, res) => {
   try {
     const events = await Event.findAll({ order: [['date', 'ASC']] });
@@ -37,7 +36,32 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// Delete an Event
+// 3. EDIT/UPDATE EVENT DATA
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { eventName, eventImage, date, time, venue, category } = req.body;
+
+    const event = await Event.findByPk(id);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    event.eventName = eventName;
+    event.eventImage = eventImage;
+    event.date = date;
+    event.time = time;
+    event.venue = venue;
+    event.category = category;
+
+    await event.save();
+    res.status(200).json({ message: "Event updated successfully", event });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 4. DELETE AN EVENT
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;

@@ -7,7 +7,7 @@ const AddEvent = () => {
   const [adminUser, setAdminUser] = useState(null);
   const [eventsList, setEventsList] = useState([]);
   
-  // Form State (Updated with eventImage field)
+  // Creation Form State (Fully fixed field tracking)
   const [formData, setFormData] = useState({
     eventName: '',
     eventImage: '', 
@@ -17,7 +17,19 @@ const AddEvent = () => {
     category: 'Academic'
   });
 
-  // Security Verification & Initial Hydration
+  // Modal Editing Window States
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState({
+    id: '',
+    eventName: '',
+    eventImage: '',
+    date: '',
+    time: '',
+    venue: 'Main Auditorium',
+    category: 'Academic'
+  });
+
+  // Security Verification & Initial Fetch
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user || user.email !== 'admin@university.com' || user.role !== 'admin') {
@@ -42,6 +54,11 @@ const AddEvent = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleEditInputChange = (e) => {
+    setEditingEvent({ ...editingEvent, [e.target.name]: e.target.value });
+  };
+
+  // Submit Handler for Publishing a New Event
   const handlePublish = async (e) => {
     e.preventDefault();
     try {
@@ -56,10 +73,39 @@ const AddEvent = () => {
           venue: 'Main Auditorium',
           category: 'Academic'
         });
-        fetchEvents(); // Reload the interactive list
+        fetchEvents(); 
       }
     } catch (error) {
-      alert(error.response?.data?.error || "Failed to publish event.");
+      alert(error.response?.data?.error || "Failed to publish event. Verify server connection.");
+    }
+  };
+
+  // Trigger Modal and Bind Active Row Items
+  const startEditing = (event) => {
+    setEditingEvent({
+      id: event.id,
+      eventName: event.eventName,
+      eventImage: event.eventImage || '',
+      date: event.date,
+      time: event.time,
+      venue: event.venue,
+      category: event.category
+    });
+    setIsEditModalOpen(true);
+  };
+
+  // Send PUT updates to Database
+  const handleUpdateEvent = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(`http://localhost:5000/api/events/${editingEvent.id}`, editingEvent);
+      if (response.status === 200) {
+        alert("Event updated successfully!");
+        setIsEditModalOpen(false);
+        fetchEvents(); 
+      }
+    } catch (error) {
+      alert(error.response?.data?.error || "Failed to update target row data.");
     }
   };
 
@@ -81,7 +127,7 @@ const AddEvent = () => {
   if (!adminUser) return null;
 
   return (
-    <div className="bg-[#f6f7f8] min-h-screen font-display flex flex-col text-slate-900">
+    <div className="bg-[#f6f7f8] min-h-screen font-display flex flex-col text-slate-900 relative">
       {/* Navigation Header bar */}
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 lg:px-20 sticky top-0 z-50">
         <div className="flex items-center gap-8">
@@ -154,7 +200,6 @@ const AddEvent = () => {
                   />
                 </div>
 
-                {/* Event Image URL Field */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Event Image URL</label>
                   <div className="relative">
@@ -223,7 +268,7 @@ const AddEvent = () => {
             </div>
           </div>
 
-          {/* Right Layout Column: Dynamic Interactive Events List */}
+          {/* Right Layout Column: Dynamic Interactive Events List (NO IMAGES) */}
           <div className="lg:col-span-7">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
@@ -252,8 +297,10 @@ const AddEvent = () => {
                           {event.eventName}
                         </h3>
                       </div>
+                      
+                      {/* Interactive Controls */}
                       <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-2 text-slate-400 hover:text-[#137fec] hover:bg-slate-50 rounded-xl transition-all">
+                        <button onClick={() => startEditing(event)} className="p-2 text-slate-400 hover:text-[#137fec] hover:bg-slate-50 rounded-xl transition-all">
                           <span className="material-symbols-outlined text-lg">edit</span>
                         </button>
                         <button onClick={() => handleDelete(event.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
@@ -283,6 +330,111 @@ const AddEvent = () => {
           </div>
         </div>
       </main>
+
+      {/* Edit Form Popup Modal Overlay */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-2xl max-w-lg w-full transform transition-all relative">
+            
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center gap-2 text-[#137fec]">
+                <span className="material-symbols-outlined font-bold">edit_note</span>
+                <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Modify Event Data</h2>
+              </div>
+              <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <form className="space-y-4" onSubmit={handleUpdateEvent}>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Event Name</label>
+                <input 
+                  name="eventName"
+                  value={editingEvent.eventName}
+                  onChange={handleEditInputChange}
+                  className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] p-3.5 text-sm outline-none" 
+                  type="text"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Event Image URL</label>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">image</span>
+                  <input 
+                    name="eventImage"
+                    value={editingEvent.eventImage}
+                    onChange={handleEditInputChange}
+                    className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] pl-10 pr-4 py-3.5 text-sm outline-none" 
+                    type="url"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Date</label>
+                  <input name="date" value={editingEvent.date} onChange={handleEditInputChange} className="w-full rounded-xl border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none" type="date" required/>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Time</label>
+                  <input name="time" value={editingEvent.time} onChange={handleEditInputChange} className="w-full rounded-xl border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none" type="time" required/>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Venue</label>
+                <select name="venue" value={editingEvent.venue} onChange={handleEditInputChange} className="w-full rounded-xl border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none">
+                  <option value="Main Auditorium">Main Auditorium</option>
+                  <option value="Tech Plaza">Tech Plaza</option>
+                  <option value="Science Block C Hall">Science Block C Hall</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Category</label>
+                <div className="flex flex-wrap gap-2">
+                  {['Academic', 'Cultural', 'Sports', 'Workshop'].map((cat) => (
+                    <label key={cat} className="cursor-pointer">
+                      <input 
+                        className="peer sr-only" 
+                        name="category" 
+                        type="radio" 
+                        value={cat}
+                        checked={editingEvent.category === cat}
+                        onChange={handleEditInputChange}
+                      />
+                      <span className="px-5 py-2.5 rounded-full border border-slate-200 text-xs font-bold text-slate-500 peer-checked:bg-[#137fec] peer-checked:text-white peer-checked:border-[#137fec] transition-all block text-center">
+                        {cat}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button 
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="w-1/3 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-xl text-sm"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="w-2/3 bg-[#137fec] text-white font-black py-3.5 rounded-xl shadow-lg shadow-[#137fec]/20 text-sm flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-lg">save</span>
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <footer className="mt-auto border-t border-slate-200 py-8 bg-white text-center">
         <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest leading-relaxed">
