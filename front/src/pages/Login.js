@@ -57,13 +57,10 @@ const Login = () => {
         </div>
         
         {/* Home Link Navigation positioned in the right corner of the header */}
-        <Link 
-          to="/" 
-          className="text-sm font-medium text-slate-800 hover:text-[#137fec] transition-colors flex items-center gap-1 uppercase tracking-wider"
-        >
-          <span className="material-symbols-outlined text-sm">home</span>
-          Home
-        </Link>
+        <nav className="hidden md:flex items-center gap-8">
+           <Link to="/" className="text-slate-800 hover:text-blue-500 text-sm font-medium">Home</Link>
+           <Link to="/Register" className="text-slate-800 hover:text-blue-500 text-sm font-medium">Register</Link>
+        </nav>
       </header>
 
       <main className="flex-grow flex items-center justify-center px-4 py-12">

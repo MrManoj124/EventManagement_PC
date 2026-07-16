@@ -4,16 +4,26 @@ import axios from 'axios';
 
 const Home = () => {
   const [user, setUser] = useState(null);
-  const [liveEvents, setLiveEvents] = useState([]); // Array state for database records
+  const [liveEvents, setLiveEvents] = useState([]); 
+  const [hoveredEvent, setHoveredEvent] = useState(null); 
+  const [mousePos, setMousePosition] = useState({ x: 0, y: 0 }); // Tracks coordinates for precision positioning
   const navigate = useNavigate();
 
-  // Check if user is logged in & fetch live database events on component mount
+  // Dynamic Date Engine state variables
+  const [currentDate, setCurrentDate] = useState(new Date()); 
+  const currentMonth = currentDate.getMonth(); 
+  const currentYear = currentDate.getFullYear();
+
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June", 
+    "July", "August", "September", "October", "November", "December"
+  ];
+
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
-
     fetchLiveEvents();
   }, []);
 
@@ -30,6 +40,37 @@ const Home = () => {
     localStorage.removeItem('user');
     setUser(null);
     navigate('/login');
+  };
+
+  const handlePrevMonth = () => {
+    setCurrentDate(new Date(currentYear, currentMonth - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(new Date(currentYear, currentMonth + 1, 1));
+  };
+
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+
+  const getEventForDate = (dayNumber) => {
+    return liveEvents.find(event => {
+      if (!event.date) return false;
+      const [evYear, evMonth, evDay] = event.date.split('-');
+      return (
+        parseInt(evYear) === currentYear &&
+        parseInt(evMonth) === (currentMonth + 1) &&
+        parseInt(evDay) === dayNumber
+      );
+    });
+  };
+
+  // Capture cursor positional metrics dynamically on hover moving
+  const handleMouseMove = (e) => {
+    setMousePosition({
+      x: e.clientX,
+      y: e.clientY
+    });
   };
 
   return (
@@ -49,7 +90,6 @@ const Home = () => {
             <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Contact Us</Link>
             
             {user ? (
-              /* User Profile Section - Shows when logged in */
               <div className="flex items-center gap-4 pl-4 border-l border-slate-200">
                 <div className="flex items-center gap-2">
                   <img 
@@ -71,7 +111,6 @@ const Home = () => {
                 </button>
               </div>
             ) : (
-              /* Auth Buttons - Shows when logged out */
               <div className="flex gap-3">
                 <Link to="/register" className="inline-flex items-center justify-center rounded-lg border border-[#137fec] px-5 py-2 text-sm font-semibold text-[#137fec] hover:bg-[#137fec]/10 transition-all">
                   Register
@@ -122,7 +161,7 @@ const Home = () => {
         {/* Content Grid */}
         <section className="pb-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Left: Dynamic Upcoming Events List */}
+            {/* Left Column: Events Display Grid */}
             <div className="lg:col-span-8">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-bold text-slate-900">Upcoming Events</h2>
@@ -175,27 +214,56 @@ const Home = () => {
               )}
             </div>
 
-            {/* Right: Sidebar */}
+            {/* Right Column: Calendar & Sidebar */}
             <div className="lg:col-span-4 space-y-8">
-              {/* Calendar Card */}
-              <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              {/* Dynamic Calendar Module */}
+              <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold">Event Calendar</h3>
+                  <h3 className="font-bold text-slate-900">Event Calendar</h3>
                   <div className="flex gap-1 text-slate-400">
-                    <span className="material-symbols-outlined cursor-pointer">chevron_left</span>
-                    <span className="material-symbols-outlined cursor-pointer">chevron_right</span>
+                    <span onClick={handlePrevMonth} className="material-symbols-outlined cursor-pointer select-none hover:text-slate-900 transition-colors">chevron_left</span>
+                    <span onClick={handleNextMonth} className="material-symbols-outlined cursor-pointer select-none hover:text-slate-900 transition-colors">chevron_right</span>
                   </div>
                 </div>
-                <div className="text-center font-bold text-sm mb-4">October 2024</div>
+                
+                <div className="text-center font-bold text-sm mb-4 text-slate-800">
+                  {monthNames[currentMonth]} {currentYear}
+                </div>
+
                 <div className="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 mb-2">
                   <div>SU</div><div>MO</div><div>TU</div><div>WE</div><div>TH</div><div>FR</div><div>SA</div>
                 </div>
-                <div className="grid grid-cols-7 gap-1 text-sm text-center">
-                  {[...Array(31)].map((_, i) => (
-                    <div key={i} className={`py-2 rounded-lg ${i + 1 === 15 ? 'bg-[#137fec] text-white font-bold' : 'hover:bg-slate-50'}`}>
-                      {i + 1}
-                    </div>
+
+                <div className="grid grid-cols-7 gap-1 text-sm text-center relative">
+                  {[...Array(firstDayIndex)].map((_, idx) => (
+                    <div key={`empty-${idx}`} className="py-2"></div>
                   ))}
+
+                  {[...Array(daysInMonth)].map((_, i) => {
+                    const dayNum = i + 1;
+                    const dayEvent = getEventForDate(dayNum);
+                    
+                    return (
+                      <div 
+                        key={`day-${dayNum}`} 
+                        onMouseEnter={(e) => {
+                          if (dayEvent) {
+                            setHoveredEvent(dayEvent);
+                            handleMouseMove(e);
+                          }
+                        }}
+                        onMouseMove={(e) => dayEvent && handleMouseMove(e)}
+                        onMouseLeave={() => setHoveredEvent(null)}
+                        className={`py-2 rounded-lg transition-all relative cursor-default ${
+                          dayEvent 
+                            ? 'bg-[#137fec] text-white font-black shadow-sm' 
+                            : 'hover:bg-slate-50 text-slate-800 font-medium'
+                        }`}
+                      >
+                        {dayNum}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -212,6 +280,40 @@ const Home = () => {
           </div>
         </section>
       </main>
+
+      {/* Precision Floating Tooltip - Placed outside parent to prevent clipping containers */}
+      {hoveredEvent && (
+        <div 
+          className="fixed pointer-events-none bg-slate-900 text-white p-4 rounded-xl shadow-2xl z-[9999] border border-slate-800 text-left max-w-xs w-64 transition-transform duration-75 ease-out"
+          style={{
+            left: `${mousePos.x + 15}px`, // Offset 15px right of the pointer
+            top: `${mousePos.y + 15}px`   // Offset 15px below the pointer
+          }}
+        >
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <span className="text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded bg-[#137fec]">
+              {hoveredEvent.category}
+            </span>
+            <span className="text-[10px] text-slate-400 font-bold flex items-center gap-0.5">
+              <span className="material-symbols-outlined text-xs">calendar_today</span>
+              {hoveredEvent.date}
+            </span>
+          </div>
+          <h4 className="font-black text-sm text-white leading-tight mb-2">
+            {hoveredEvent.eventName}
+          </h4>
+          <div className="space-y-1 text-[11px] text-slate-300 font-medium">
+            <div className="flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-xs text-[#137fec]">schedule</span>
+              {hoveredEvent.time}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-xs text-[#137fec]">location_on</span>
+              {hoveredEvent.venue}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 py-16">
