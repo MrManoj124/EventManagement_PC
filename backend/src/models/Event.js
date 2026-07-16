@@ -30,11 +30,7 @@ const Event = sequelize.define('Event', {
   category: {
     type: DataTypes.ENUM('Academic', 'Cultural', 'Sports', 'Workshop'),
     defaultValue: 'Academic'
-  },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: true
   }
 });
 
-module.exports = Event;
+module.exports = Event; 
