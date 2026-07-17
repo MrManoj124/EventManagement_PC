@@ -10,6 +10,13 @@ const AddEvent = () => {
   const [newVenueInput, setNewVenueInput] = useState(''); 
   const [isAddingVenue, setIsAddingVenue] = useState(false); 
 
+  // Global Success Notification Modal State
+  const [successModal, setSuccessModal] = useState({
+    isOpen: false,
+    title: '',
+    message: ''
+  });
+
   // Creation Form State
   const [formData, setFormData] = useState({
     eventName: '',
@@ -46,16 +53,13 @@ const AddEvent = () => {
 
   const loadDashboardData = async () => {
     try {
-      // 1. Fetch venues baseline
       const venuesResponse = await axios.get('http://localhost:5000/api/venues/all');
       setVenuesList(venuesResponse.data);
       
-      // 2. Initialize dynamic form selection safely
       if (venuesResponse.data.length > 0) {
         setFormData(prev => ({ ...prev, venue: venuesResponse.data[0].venueName }));
       }
 
-      // 3. Fetch current events list
       const eventsResponse = await axios.get('http://localhost:5000/api/events/all');
       setEventsList(eventsResponse.data);
     } catch (error) {
@@ -80,7 +84,16 @@ const AddEvent = () => {
     setEditingEvent({ ...editingEvent, [e.target.name]: e.target.value });
   };
 
-  // Safe client-side response object matching
+  // 1. Success Modal Trigger Helper
+  const triggerSuccessModal = (title, message) => {
+    setSuccessModal({
+      isOpen: true,
+      title,
+      message
+    });
+  };
+
+  // 2. Add New Venue with Custom Success Modal
   const handleAddNewVenue = async () => {
     if (!newVenueInput.trim()) return;
     try {
@@ -89,31 +102,33 @@ const AddEvent = () => {
       });
       
       if (response.status === 201) {
-        alert("Venue added to system dropdown filters.");
         setNewVenueInput('');
         setIsAddingVenue(false);
         
-        // Fetch fresh dropdown array options
         const updatedResponse = await axios.get('http://localhost:5000/api/venues/all');
         setVenuesList(updatedResponse.data);
         
-        // Set the state dynamically matching verified response properties safely
         if (response.data && response.data.venue) {
           setFormData(prev => ({ ...prev, venue: response.data.venue.venueName }));
         }
+
+        // Replaced native alert with custom success modal
+        triggerSuccessModal(
+          "Venue Registered",
+          `"${response.data.venue.venueName}" has been successfully added to your location options.`
+        );
       }
     } catch (error) {
-      // Extract exact database collision messages out to the user interface
       alert(error.response?.data?.error || "Failed to parse backend data array rows.");
     }
   };
 
+  // 3. Publish Event with Custom Success Modal
   const handlePublish = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/api/events/add', formData);
       if (response.status === 201) {
-        alert("Event published successfully!");
         setFormData({
           eventName: '',
           eventImage: '',
@@ -123,6 +138,12 @@ const AddEvent = () => {
           category: 'Academic'
         });
         fetchEvents(); 
+
+        // Replaced native alert with custom success modal
+        triggerSuccessModal(
+          "Event Published",
+          "Your new university event has been built and listed live on the platform dashboard successfully."
+        );
       }
     } catch (error) {
       alert(error.response?.data?.error || "Failed to publish event. Verify server connection.");
@@ -142,25 +163,40 @@ const AddEvent = () => {
     setIsEditModalOpen(true);
   };
 
+  // 4. Update Event with Custom Success Modal
   const handleUpdateEvent = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.put(`http://localhost:5000/api/events/${editingEvent.id}`, editingEvent);
       if (response.status === 200) {
-        alert("Event updated successfully!");
         setIsEditModalOpen(false);
         fetchEvents(); 
+
+        // Replaced native alert with custom success modal
+        triggerSuccessModal(
+          "Changes Saved",
+          "The event configurations and data values have been updated smoothly inside the database rows."
+        );
       }
     } catch (error) {
       alert(error.response?.data?.error || "Failed to update target row data.");
     }
   };
 
+  // 5. Delete Event with Custom Success Modal
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/events/${id}`);
-      fetchEvents();
+      const response = await axios.delete(`http://localhost:5000/api/events/${id}`);
+      if (response.status === 200) {
+        fetchEvents();
+
+        // Replaced native alert with custom success modal
+        triggerSuccessModal(
+          "Event Removed",
+          "The selected event database record has been safely wiped from your tracking schedules."
+        );
+      }
     } catch (error) {
       alert("Error removing the event record from database.");
     }
@@ -175,7 +211,7 @@ const AddEvent = () => {
 
   return (
     <div className="bg-[#f6f7f8] min-h-screen font-display flex flex-col text-slate-900 relative">
-      {/* Header View Area Layout */}
+      {/* Navigation Header bar */}
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 lg:px-20 sticky top-0 z-50">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2">
@@ -211,7 +247,7 @@ const AddEvent = () => {
       </header>
 
       <main className="flex-1 px-6 py-10 lg:px-20 max-w-[1600px] mx-auto w-full">
-        {/* Breadcrumb Module */}
+        {/* Breadcrumbs */}
         <div className="mb-10">
           <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
             <span>Events Management</span>
@@ -223,7 +259,7 @@ const AddEvent = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Creation Side Area Column Panel Grid */}
+          {/* Left Layout Column: Create Event Form */}
           <div className="lg:col-span-5">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
               <div className="flex items-center gap-2 mb-8 text-[#137fec]">
@@ -256,7 +292,7 @@ const AddEvent = () => {
                   </div>
                 </div>
 
-                {/* Interactive Dynamic Location selector field element */}
+                {/* Venue Dropdown */}
                 <div>
                   <div className="flex justify-between items-center mb-2 ml-1">
                     <label className="block text-sm font-bold text-slate-700">Venue</label>
@@ -327,7 +363,7 @@ const AddEvent = () => {
             </div>
           </div>
 
-          {/* Right Layout Display Column: Interactive Events List */}
+          {/* Right Layout Display Column: Dynamic Events List */}
           <div className="lg:col-span-7">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
@@ -431,7 +467,7 @@ const AddEvent = () => {
 
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Venue</label>
-                <select name="venue" value={editingEvent.venue} onChange={handleEditInputChange} className="w-full rounded-xl border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none">
+                <select name="venue" value={editingEvent.venue} onChange={handleEditInputChange} className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none">
                   {venuesList.map((v) => (
                     <option key={v.id} value={v.venueName}>{v.venueName}</option>
                   ))}
@@ -460,6 +496,25 @@ const AddEvent = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Reusable Success Notification Message Modal Overlay */}
+      {successModal.isOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[200] px-4 animate-fadeIn">
+          <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-slate-100">
+            <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="material-symbols-outlined text-4xl">check_circle</span>
+            </div>
+            <h2 className="text-xl font-black text-slate-900 mb-2">{successModal.title}</h2>
+            <p className="text-slate-500 mb-6 text-sm font-medium leading-relaxed">{successModal.message}</p>
+            <button 
+              onClick={() => setSuccessModal(prev => ({ ...prev, isOpen: false }))}
+              className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition-all active:scale-95"
+            >
+              Dismiss
+            </button>
           </div>
         </div>
       )}
