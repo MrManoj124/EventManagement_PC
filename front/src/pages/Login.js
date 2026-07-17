@@ -115,13 +115,15 @@ const Login = () => {
                     </span>
                   </button>
                 </div>
-              </div>
+              </div> 
 
+              {/*
               <div className="flex items-center px-1">
                 <input className="w-4 h-4 text-[#137fec] border-slate-300 rounded focus:ring-[#137fec]" id="remember" type="checkbox" />
                 <label className="ml-2 text-xs font-semibold text-slate-500" htmlFor="remember">Remember me on this device</label>
               </div>
-
+              */} 
+              
               <button className="w-full bg-[#137fec] hover:bg-[#116ecf] text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-[#137fec]/20 active:scale-[0.98]" type="submit">
                 Sign In
               </button>
