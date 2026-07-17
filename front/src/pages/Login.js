@@ -123,7 +123,7 @@ const Login = () => {
                 <label className="ml-2 text-xs font-semibold text-slate-500" htmlFor="remember">Remember me on this device</label>
               </div>
               */} 
-              
+
               <button className="w-full bg-[#137fec] hover:bg-[#116ecf] text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-[#137fec]/20 active:scale-[0.98]" type="submit">
                 Sign In
               </button>
