@@ -17,6 +17,12 @@ const AddEvent = () => {
     message: ''
   });
 
+  // Custom Deletion Confirmation Modal State
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    targetId: null
+  });
+
   // Creation Form State
   const [formData, setFormData] = useState({
     eventName: '',
@@ -84,7 +90,7 @@ const AddEvent = () => {
     setEditingEvent({ ...editingEvent, [e.target.name]: e.target.value });
   };
 
-  // 1. Success Modal Trigger Helper
+  // Success Modal Trigger Helper
   const triggerSuccessModal = (title, message) => {
     setSuccessModal({
       isOpen: true,
@@ -93,7 +99,7 @@ const AddEvent = () => {
     });
   };
 
-  // 2. Add New Venue with Custom Success Modal
+  // Add New Venue with Custom Success Modal
   const handleAddNewVenue = async () => {
     if (!newVenueInput.trim()) return;
     try {
@@ -112,7 +118,6 @@ const AddEvent = () => {
           setFormData(prev => ({ ...prev, venue: response.data.venue.venueName }));
         }
 
-        // Replaced native alert with custom success modal
         triggerSuccessModal(
           "Venue Registered",
           `"${response.data.venue.venueName}" has been successfully added to your location options.`
@@ -123,7 +128,7 @@ const AddEvent = () => {
     }
   };
 
-  // 3. Publish Event with Custom Success Modal
+  // Publish Event with Custom Success Modal
   const handlePublish = async (e) => {
     e.preventDefault();
     try {
@@ -139,7 +144,6 @@ const AddEvent = () => {
         });
         fetchEvents(); 
 
-        // Replaced native alert with custom success modal
         triggerSuccessModal(
           "Event Published",
           "Your new university event has been built and listed live on the platform dashboard successfully."
@@ -163,7 +167,7 @@ const AddEvent = () => {
     setIsEditModalOpen(true);
   };
 
-  // 4. Update Event with Custom Success Modal
+  // Update Event with Custom Success Modal
   const handleUpdateEvent = async (e) => {
     e.preventDefault();
     try {
@@ -172,7 +176,6 @@ const AddEvent = () => {
         setIsEditModalOpen(false);
         fetchEvents(); 
 
-        // Replaced native alert with custom success modal
         triggerSuccessModal(
           "Changes Saved",
           "The event configurations and data values have been updated smoothly inside the database rows."
@@ -183,12 +186,23 @@ const AddEvent = () => {
     }
   };
 
-  // 5. Delete Event with Custom Success Modal
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this event?")) return;
+  // Open the custom delete confirmation modal instead of window.confirm
+  const initiateDelete = (id) => {
+    setDeleteModal({
+      isOpen: true,
+      targetId: id
+    });
+  };
+
+  // Process the deletion action through axios
+  const confirmDeleteEvent = async () => {
+    const id = deleteModal.targetId;
+    if (!id) return;
+    
     try {
       const response = await axios.delete(`http://localhost:5000/api/events/${id}`);
       if (response.status === 200) {
+        setDeleteModal({ isOpen: false, targetId: null });
         fetchEvents();
 
         // Replaced native alert with custom success modal
@@ -198,6 +212,7 @@ const AddEvent = () => {
         );
       }
     } catch (error) {
+      setDeleteModal({ isOpen: false, targetId: null });
       alert("Error removing the event record from database.");
     }
   };
@@ -397,7 +412,8 @@ const AddEvent = () => {
                         <button onClick={() => startEditing(event)} className="p-2 text-slate-400 hover:text-[#137fec] hover:bg-slate-50 rounded-xl transition-all">
                           <span className="material-symbols-outlined text-lg">edit</span>
                         </button>
-                        <button onClick={() => handleDelete(event.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                        {/* Now triggers dynamic overlay state instead of window.confirm */}
+                        <button onClick={() => initiateDelete(event.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
                           <span className="material-symbols-outlined text-lg">delete</span>
                         </button>
                       </div>
@@ -467,7 +483,7 @@ const AddEvent = () => {
 
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Venue</label>
-                <select name="venue" value={editingEvent.venue} onChange={handleEditInputChange} className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none">
+                <select name="venue" value={editingEvent.venue} onChange={handleEditInputChange} className="w-full rounded-xl border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none">
                   {venuesList.map((v) => (
                     <option key={v.id} value={v.venueName}>{v.venueName}</option>
                   ))}
@@ -496,6 +512,35 @@ const AddEvent = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Delete Confirmation Modal Overlay */}
+      {deleteModal.isOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[150] px-4 animate-fadeIn">
+          <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-slate-200">
+            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="material-symbols-outlined text-4xl">warning</span>
+            </div>
+            <h2 className="text-xl font-black text-slate-900 mb-2">Remove Event?</h2>
+            <p className="text-slate-500 mb-6 text-sm font-medium leading-relaxed">
+              Are you sure you want to delete this event? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setDeleteModal({ isOpen: false, targetId: null })}
+                className="w-1/3 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 text-sm transition-all"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmDeleteEvent}
+                className="w-2/3 bg-red-500 text-white font-black py-3 rounded-xl hover:bg-red-600 text-sm transition-all shadow-lg shadow-red-500/20"
+              >
+                Confirm Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
