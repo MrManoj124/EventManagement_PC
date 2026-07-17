@@ -6,14 +6,17 @@ const AddEvent = () => {
   const navigate = useNavigate();
   const [adminUser, setAdminUser] = useState(null);
   const [eventsList, setEventsList] = useState([]);
-  
-  // Creation Form State (Fully fixed field tracking)
+  const [venuesList, setVenuesList] = useState([]); 
+  const [newVenueInput, setNewVenueInput] = useState(''); 
+  const [isAddingVenue, setIsAddingVenue] = useState(false); 
+
+  // Creation Form State
   const [formData, setFormData] = useState({
     eventName: '',
     eventImage: '', 
     date: '',
     time: '',
-    venue: 'Main Auditorium',
+    venue: '', 
     category: 'Academic'
   });
 
@@ -25,7 +28,7 @@ const AddEvent = () => {
     eventImage: '',
     date: '',
     time: '',
-    venue: 'Main Auditorium',
+    venue: '',
     category: 'Academic'
   });
 
@@ -37,9 +40,28 @@ const AddEvent = () => {
       navigate('/login');
     } else {
       setAdminUser(user);
-      fetchEvents();
+      loadDashboardData();
     }
   }, [navigate]);
+
+  const loadDashboardData = async () => {
+    try {
+      // 1. Fetch venues baseline
+      const venuesResponse = await axios.get('http://localhost:5000/api/venues/all');
+      setVenuesList(venuesResponse.data);
+      
+      // 2. Initialize dynamic form selection safely
+      if (venuesResponse.data.length > 0) {
+        setFormData(prev => ({ ...prev, venue: venuesResponse.data[0].venueName }));
+      }
+
+      // 3. Fetch current events list
+      const eventsResponse = await axios.get('http://localhost:5000/api/events/all');
+      setEventsList(eventsResponse.data);
+    } catch (error) {
+      console.error("Error connecting to database collections:", error);
+    }
+  };
 
   const fetchEvents = async () => {
     try {
@@ -58,7 +80,34 @@ const AddEvent = () => {
     setEditingEvent({ ...editingEvent, [e.target.name]: e.target.value });
   };
 
-  // Submit Handler for Publishing a New Event
+  // Safe client-side response object matching
+  const handleAddNewVenue = async () => {
+    if (!newVenueInput.trim()) return;
+    try {
+      const response = await axios.post('http://localhost:5000/api/venues/add', { 
+        venueName: newVenueInput.trim() 
+      });
+      
+      if (response.status === 201) {
+        alert("Venue added to system dropdown filters.");
+        setNewVenueInput('');
+        setIsAddingVenue(false);
+        
+        // Fetch fresh dropdown array options
+        const updatedResponse = await axios.get('http://localhost:5000/api/venues/all');
+        setVenuesList(updatedResponse.data);
+        
+        // Set the state dynamically matching verified response properties safely
+        if (response.data && response.data.venue) {
+          setFormData(prev => ({ ...prev, venue: response.data.venue.venueName }));
+        }
+      }
+    } catch (error) {
+      // Extract exact database collision messages out to the user interface
+      alert(error.response?.data?.error || "Failed to parse backend data array rows.");
+    }
+  };
+
   const handlePublish = async (e) => {
     e.preventDefault();
     try {
@@ -70,7 +119,7 @@ const AddEvent = () => {
           eventImage: '',
           date: '',
           time: '',
-          venue: 'Main Auditorium',
+          venue: venuesList[0]?.venueName || '',
           category: 'Academic'
         });
         fetchEvents(); 
@@ -80,7 +129,6 @@ const AddEvent = () => {
     }
   };
 
-  // Trigger Modal and Bind Active Row Items
   const startEditing = (event) => {
     setEditingEvent({
       id: event.id,
@@ -88,13 +136,12 @@ const AddEvent = () => {
       eventImage: event.eventImage || '',
       date: event.date,
       time: event.time,
-      venue: event.venue,
+      venue: event.venue || (venuesList[0]?.venueName || ''),
       category: event.category
     });
     setIsEditModalOpen(true);
   };
 
-  // Send PUT updates to Database
   const handleUpdateEvent = async (e) => {
     e.preventDefault();
     try {
@@ -128,7 +175,7 @@ const AddEvent = () => {
 
   return (
     <div className="bg-[#f6f7f8] min-h-screen font-display flex flex-col text-slate-900 relative">
-      {/* Navigation Header bar */}
+      {/* Header View Area Layout */}
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 lg:px-20 sticky top-0 z-50">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2">
@@ -139,14 +186,8 @@ const AddEvent = () => {
           </div>
         </div>
 
-        {/* Action controls panel on the right side */}
         <div className="flex flex-1 justify-end gap-6 items-center">
-          
-          {/* Home Link Navigation positioned cleanly on the right side near profile */}
-          <Link 
-            to="/" 
-            className="text-xs font-bold text-slate-500 hover:text-[#137fec] transition-colors flex items-center gap-1 uppercase tracking-wider pr-2"
-          >
+          <Link to="/" className="text-xs font-bold text-slate-500 hover:text-[#137fec] transition-colors flex items-center gap-1 uppercase tracking-wider pr-2">
             <span className="material-symbols-outlined text-sm">home</span>
             Home
           </Link>
@@ -158,17 +199,10 @@ const AddEvent = () => {
                 <p className="text-[10px] text-slate-400 font-medium">{adminUser.email}</p>
               </div>
               <div className="h-9 w-9 rounded-full bg-[#137fec]/20 border border-[#137fec]/30 overflow-hidden">
-                <img 
-                  alt="Admin" 
-                  className="w-full h-full object-cover" 
-                  src={`https://ui-avatars.com/api/?name=Admin&background=137fec&color=fff&bold=true`}
-                />
+                <img alt="Admin" className="w-full h-full object-cover" src={`https://ui-avatars.com/api/?name=Admin&background=137fec&color=fff&bold=true`}/>
               </div>
             </div>
-            <button 
-              onClick={handleLogout}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-all font-bold text-xs"
-            >
+            <button onClick={handleLogout} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-all font-bold text-xs">
               <span className="material-symbols-outlined text-sm">logout</span>
               Logout
             </button>
@@ -177,7 +211,7 @@ const AddEvent = () => {
       </header>
 
       <main className="flex-1 px-6 py-10 lg:px-20 max-w-[1600px] mx-auto w-full">
-        {/* Breadcrumb Navigation trail */}
+        {/* Breadcrumb Module */}
         <div className="mb-10">
           <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
             <span>Events Management</span>
@@ -189,7 +223,7 @@ const AddEvent = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Left Layout Column: Create Event Form */}
+          {/* Creation Side Area Column Panel Grid */}
           <div className="lg:col-span-5">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
               <div className="flex items-center gap-2 mb-8 text-[#137fec]">
@@ -200,30 +234,14 @@ const AddEvent = () => {
               <form className="space-y-5" onSubmit={handlePublish}>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Event Name</label>
-                  <input 
-                    name="eventName"
-                    value={formData.eventName}
-                    onChange={handleInputChange}
-                    className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] p-3.5 text-sm transition-all outline-none" 
-                    placeholder="e.g. Graduate Career Fair 2024" 
-                    type="text"
-                    required
-                  />
+                  <input name="eventName" value={formData.eventName} onChange={handleInputChange} className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] p-3.5 text-sm transition-all outline-none" placeholder="e.g. Graduate Career Fair 2024" type="text" required />
                 </div>
 
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Event Image URL</label>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">image</span>
-                    <input 
-                      name="eventImage"
-                      value={formData.eventImage}
-                      onChange={handleInputChange}
-                      className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] pl-10 pr-4 py-3.5 text-sm transition-all outline-none text-slate-900 placeholder:text-slate-400" 
-                      placeholder="https://example.com/banner.jpg" 
-                      type="url"
-                      required
-                    />
+                    <input name="eventImage" value={formData.eventImage} onChange={handleInputChange} className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] pl-10 pr-4 py-3.5 text-sm transition-all outline-none text-slate-900 placeholder:text-slate-400" placeholder="https://example.com/banner.jpg" type="url" required />
                   </div>
                 </div>
 
@@ -238,13 +256,53 @@ const AddEvent = () => {
                   </div>
                 </div>
 
+                {/* Interactive Dynamic Location selector field element */}
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2 ml-1">Venue</label>
-                  <select name="venue" value={formData.venue} onChange={handleInputChange} className="w-full rounded-xl border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none appearance-none">
-                    <option value="Main Auditorium">Main Auditorium</option>
-                    <option value="Tech Plaza">Tech Plaza</option>
-                    <option value="Science Block C Hall">Science Block C Hall</option>
-                  </select>
+                  <div className="flex justify-between items-center mb-2 ml-1">
+                    <label className="block text-sm font-bold text-slate-700">Venue</label>
+                    <button 
+                      type="button" 
+                      onClick={() => setIsAddingVenue(!isAddingVenue)}
+                      className="text-xs font-bold text-[#137fec] hover:underline flex items-center gap-0.5"
+                    >
+                      <span className="material-symbols-outlined text-xs">{isAddingVenue ? 'close' : 'add'}</span>
+                      {isAddingVenue ? 'Cancel' : 'Add New Venue'}
+                    </button>
+                  </div>
+
+                  {isAddingVenue ? (
+                    <div className="flex gap-2 animate-fadeIn">
+                      <input 
+                        type="text"
+                        value={newVenueInput}
+                        onChange={(e) => setNewVenueInput(e.target.value)}
+                        placeholder="Enter location name..."
+                        className="flex-1 rounded-xl border border-slate-200 bg-[#f8fafc] px-3.5 py-2 text-sm outline-none focus:ring-2 focus:ring-[#137fec]"
+                      />
+                      <button 
+                        type="button"
+                        onClick={handleAddNewVenue}
+                        className="bg-[#137fec] text-white text-xs font-black px-4 py-2 rounded-xl hover:bg-[#116ecf] transition-all"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <select 
+                        name="venue" 
+                        value={formData.venue} 
+                        onChange={handleInputChange} 
+                        className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none appearance-none focus:ring-2 focus:ring-[#137fec]"
+                        required
+                      >
+                        {venuesList.map((v) => (
+                          <option key={v.id} value={v.venueName}>{v.venueName}</option>
+                        ))}
+                      </select>
+                      <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">unfold_more</span>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -252,14 +310,7 @@ const AddEvent = () => {
                   <div className="flex flex-wrap gap-2">
                     {['Academic', 'Cultural', 'Sports', 'Workshop'].map((cat) => (
                       <label key={cat} className="cursor-pointer">
-                        <input 
-                          className="peer sr-only" 
-                          name="category" 
-                          type="radio" 
-                          value={cat}
-                          checked={formData.category === cat}
-                          onChange={handleInputChange}
-                        />
+                        <input className="peer sr-only" name="category" type="radio" value={cat} checked={formData.category === cat} onChange={handleInputChange} />
                         <span className="px-5 py-2.5 rounded-full border border-slate-200 text-xs font-bold text-slate-500 peer-checked:bg-[#137fec] peer-checked:text-white peer-checked:border-[#137fec] transition-all block text-center">
                           {cat}
                         </span>
@@ -268,10 +319,7 @@ const AddEvent = () => {
                   </div>
                 </div>
 
-                <button 
-                  className="w-full bg-[#137fec] hover:bg-[#116ecf] text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-[#137fec]/20 transition-all active:scale-[0.98] mt-4" 
-                  type="submit"
-                >
+                <button className="w-full bg-[#137fec] hover:bg-[#116ecf] text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-[#137fec]/20 transition-all active:scale-[0.98] mt-4" type="submit">
                   <span className="material-symbols-outlined">add_circle</span>
                   Publish Event
                 </button>
@@ -279,7 +327,7 @@ const AddEvent = () => {
             </div>
           </div>
 
-          {/* Right Layout Column: Dynamic Interactive Events List (NO IMAGES) */}
+          {/* Right Layout Display Column: Interactive Events List */}
           <div className="lg:col-span-7">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
@@ -359,28 +407,14 @@ const AddEvent = () => {
             <form className="space-y-4" onSubmit={handleUpdateEvent}>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Event Name</label>
-                <input 
-                  name="eventName"
-                  value={editingEvent.eventName}
-                  onChange={handleEditInputChange}
-                  className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] p-3.5 text-sm outline-none" 
-                  type="text"
-                  required
-                />
+                <input name="eventName" value={editingEvent.eventName} onChange={handleEditInputChange} className="w-full rounded-xl border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] p-3.5 text-sm outline-none" type="text" required />
               </div>
 
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Event Image URL</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">image</span>
-                  <input 
-                    name="eventImage"
-                    value={editingEvent.eventImage}
-                    onChange={handleEditInputChange}
-                    className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] pl-10 pr-4 py-3.5 text-sm transition-all outline-none" 
-                    type="url"
-                    required
-                  />
+                  <input name="eventImage" value={editingEvent.eventImage} onChange={handleEditInputChange} className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] focus:ring-2 focus:ring-[#137fec] pl-10 pr-4 py-3.5 text-sm transition-all outline-none" type="url" required />
                 </div>
               </div>
 
@@ -398,9 +432,9 @@ const AddEvent = () => {
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Venue</label>
                 <select name="venue" value={editingEvent.venue} onChange={handleEditInputChange} className="w-full rounded-xl border-slate-200 bg-[#f8fafc] p-3.5 text-sm outline-none">
-                  <option value="Main Auditorium">Main Auditorium</option>
-                  <option value="Tech Plaza">Tech Plaza</option>
-                  <option value="Science Block C Hall">Science Block C Hall</option>
+                  {venuesList.map((v) => (
+                    <option key={v.id} value={v.venueName}>{v.venueName}</option>
+                  ))}
                 </select>
               </div>
 
@@ -409,14 +443,7 @@ const AddEvent = () => {
                 <div className="flex flex-wrap gap-2">
                   {['Academic', 'Cultural', 'Sports', 'Workshop'].map((cat) => (
                     <label key={cat} className="cursor-pointer">
-                      <input 
-                        className="peer sr-only" 
-                        name="category" 
-                        type="radio" 
-                        value={cat}
-                        checked={editingEvent.category === cat}
-                        onChange={handleEditInputChange}
-                      />
+                      <input className="peer sr-only" name="category" type="radio" value={cat} checked={editingEvent.category === cat} onChange={handleEditInputChange} />
                       <span className="px-5 py-2.5 rounded-full border border-slate-200 text-xs font-bold text-slate-500 peer-checked:bg-[#137fec] peer-checked:text-white peer-checked:border-[#137fec] transition-all block text-center">
                         {cat}
                       </span>
@@ -426,17 +453,8 @@ const AddEvent = () => {
               </div>
 
               <div className="flex gap-4 pt-4">
-                <button 
-                  type="button"
-                  onClick={() => setIsEditModalOpen(false)}
-                  className="w-1/3 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-xl text-sm"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  className="w-2/3 bg-[#137fec] text-white font-black py-3.5 rounded-xl shadow-lg shadow-[#137fec]/20 text-sm flex items-center justify-center gap-2"
-                >
+                <button type="button" onClick={() => setIsEditModalOpen(false)} className="w-1/3 bg-slate-100 text-slate-700 font-bold py-3.5 rounded-xl text-sm">Cancel</button>
+                <button type="submit" className="w-2/3 bg-[#137fec] text-white font-black py-3.5 rounded-xl shadow-lg shadow-[#137fec]/20 text-sm flex items-center justify-center gap-2">
                   <span className="material-symbols-outlined text-lg">save</span>
                   Save Changes
                 </button>
