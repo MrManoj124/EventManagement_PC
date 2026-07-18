@@ -30,15 +30,20 @@ const EventRegister = () => {
               className="w-full h-full object-cover" 
               alt="Tech Symposium"
             />
-            {/* Dark Overlay */}
-            <div className="absolute inset-0 bg-black/50 flex flex-col justify-center px-12">
+            {/* Dark Overlay with custom background image injected behind text */}
+            <div 
+              style={{
+                backgroundImage: 'url("https://static.vecteezy.com/system/resources/thumbnails/049/484/649/small/blurred-crowd-at-a-concert-with-stage-lights-photo.jpg")'
+              }}
+              className="absolute inset-0 bg-black/50 bg-blend-overlay bg-cover bg-center flex flex-col justify-center px-12"
+            >
               <span className="bg-[#137fec] text-white text-[10px] font-bold px-3 py-1 rounded-full w-fit mb-4 uppercase tracking-widest">
                 Upcoming Event
               </span>
-              <h1 className="text-white text-4xl md:text-5xl font-black mb-4">
+              <h1 className="text-white text-4xl md:text-5xl font-black mb-4 tracking-tight">
                 Annual Tech Symposium 2024
               </h1>
-              <p className="text-slate-200 max-w-2xl text-lg leading-relaxed">
+              <p className="text-slate-200 max-w-2xl text-lg leading-relaxed font-medium">
                 Join us for a day of innovation, networking, and industry-leading keynotes from tech visionaries.
               </p>
             </div>
@@ -88,7 +93,7 @@ const EventRegister = () => {
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Full Name</label>
                   <input 
-                    className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900"
+                    className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 text-sm"
                     placeholder="Alex Johnson"
                     type="text"
                   />
@@ -97,7 +102,7 @@ const EventRegister = () => {
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">University Email</label>
                   <input 
-                    className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900"
+                    className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 text-sm"
                     placeholder="alex.johnson@university.edu"
                     type="email"
                   />
@@ -105,7 +110,7 @@ const EventRegister = () => {
                 {/* Department */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Department</label>
-                  <select className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 appearance-none">
+                  <select className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 text-sm appearance-none">
                     <option>Select your department</option>
                     <option>ICT</option>
                     <option>Engineering</option>
@@ -115,7 +120,7 @@ const EventRegister = () => {
                 {/* Batch */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Year / Batch</label>
-                  <select className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 appearance-none">
+                  <select className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 text-sm appearance-none">
                     <option>Select your year</option>
                     <option>2021/2022</option>
                     <option>2022/2023</option>
@@ -158,4 +163,4 @@ const EventRegister = () => {
   );
 };
 
-export default EventRegister;
+export default EventRegister; 
