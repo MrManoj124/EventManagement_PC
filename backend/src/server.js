@@ -4,7 +4,8 @@ const dotenv = require('dotenv');
 const { connectDB } = require('./config/db'); 
 const userRoutes = require('./routes/userRoutes');
 const eventRoutes = require('./routes/eventRoutes');
-const venueRoutes = require('./routes/venueRoutes'); // 1. Verify this import statement exists!
+const venueRoutes = require('./routes/venueRoutes');
+const contactRoutes = require('./routes/contactRoutes'); // 1. Verify this import statement is present!
 
 dotenv.config();
 connectDB();
@@ -12,11 +13,12 @@ connectDB();
 const app = express();
 
 app.use(cors());
-app.use(express.json()); // Essential to read req.body on the backend
+app.use(express.json()); // Essential middleware to parse JSON req.body payloads
 
 app.use('/api/users', userRoutes);
 app.use('/api/events', eventRoutes);
-app.use('/api/venues', venueRoutes); // 2. Verify this route mount line exists!
+app.use('/api/venues', venueRoutes);
+app.use('/api/contact', contactRoutes); // 2. Verify this route handler entry exists!
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
