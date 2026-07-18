@@ -53,7 +53,8 @@ const Contact = () => {
         });
       }
     } catch (error) {
-      alert(error.response?.data?.error || "Failed to communicate with mail servers.");
+      // Extracted real error responses instead of showing a generic text block
+      alert(error.response?.data?.error || "Failed to communicate with mail servers. Verify backend configurations.");
     } finally {
       setIsSubmitting(false);
     }
@@ -123,7 +124,7 @@ const Contact = () => {
                 className="w-full bg-[#137fec] hover:bg-[#116ecf] disabled:bg-slate-400 text-white font-black py-4 rounded-xl text-lg transition-all active:scale-[0.99] shadow-lg shadow-[#137fec]/10 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
-                  <>Dispatched Routing...</>
+                  <>Message Sending...</>
                 ) : (
                   <>Send Message</>
                 )}
