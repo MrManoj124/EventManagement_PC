@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const EventRegister = () => {
   const location = useLocation();
   
+  // Force the browser window viewport context to snap perfectly to the absolute top position metric upon route mounting
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Extract passed routing metadata or apply beautiful initial hardcoded defaults as a fallback
   const passedEvent = location.state?.event;
 
