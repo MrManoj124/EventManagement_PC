@@ -6,7 +6,7 @@ const Home = () => {
   const [user, setUser] = useState(null);
   const [liveEvents, setLiveEvents] = useState([]); 
   const [hoveredEvent, setHoveredEvent] = useState(null); 
-  const [mousePos, setMousePosition] = useState({ x: 0, y: 0 }); // Tracks coordinates for precision positioning
+  const [mousePos, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
 
   // Dynamic Date Engine state variables
@@ -65,7 +65,6 @@ const Home = () => {
     });
   };
 
-  // Capture cursor positional metrics dynamically on hover moving
   const handleMouseMove = (e) => {
     setMousePosition({
       x: e.clientX,
@@ -204,7 +203,12 @@ const Home = () => {
                             {event.venue}
                           </div>
                         </div>
-                        <Link to="/event-register" className="block w-full text-center mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all">
+                        {/* Passes event data object down to EventRegister context route */}
+                        <Link 
+                          to="/event-register" 
+                          state={{ event }}
+                          className="block w-full text-center mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all"
+                        >
                           Register
                         </Link>
                       </div>
@@ -216,7 +220,6 @@ const Home = () => {
 
             {/* Right Column: Calendar & Sidebar */}
             <div className="lg:col-span-4 space-y-8">
-              {/* Dynamic Calendar Module */}
               <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-slate-900">Event Calendar</h3>
@@ -267,7 +270,6 @@ const Home = () => {
                 </div>
               </div>
 
-              {/* Newsletter / Get Notified Card */}
               <div className="bg-[#137fec] p-8 rounded-2xl text-white shadow-lg shadow-[#137fec]/20">
                 <h3 className="text-xl font-bold mb-2">Get Notified</h3>
                 <p className="text-sm text-white/80 mb-6 leading-relaxed">Subscribe to our newsletter for weekly event schedules directly in your inbox.</p>
@@ -281,13 +283,13 @@ const Home = () => {
         </section>
       </main>
 
-      {/* Precision Floating Tooltip - Placed outside parent to prevent clipping containers */}
+      {/* Precision Floating Tooltip */}
       {hoveredEvent && (
         <div 
           className="fixed pointer-events-none bg-slate-900 text-white p-4 rounded-xl shadow-2xl z-[9999] border border-slate-800 text-left max-w-xs w-64 transition-transform duration-75 ease-out"
           style={{
-            left: `${mousePos.x + 15}px`, // Offset 15px right of the pointer
-            top: `${mousePos.y + 15}px`   // Offset 15px below the pointer
+            left: `${mousePos.x + 15}px`, 
+            top: `${mousePos.y + 15}px`   
           }}
         >
           <div className="flex items-center justify-between gap-2 mb-1.5">
