@@ -1,7 +1,21 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const EventRegister = () => {
+  const location = useLocation();
+  
+  // Extract passed routing metadata or apply beautiful initial hardcoded defaults as a fallback
+  const passedEvent = location.state?.event;
+
+  const currentEvent = {
+    eventName: passedEvent?.eventName || "Annual Tech Symposium 2024",
+    category: passedEvent?.category || "Upcoming Event",
+    date: passedEvent?.date || "Oct 25, 2024",
+    time: passedEvent?.time || "10:00 AM",
+    venue: passedEvent?.venue || "Main Auditorium, Block C",
+    eventImage: passedEvent?.eventImage || "https://images.unsplash.com/photo-1540575861501-7ad05823c9f5?auto=format&fit=crop&w=1200&q=80"
+  };
+
   return (
     <div className="bg-[#f6f7f8] min-h-screen font-sans flex flex-col">
       {/* Navbar */}
@@ -22,15 +36,15 @@ const EventRegister = () => {
       </header>
 
       <main className="container mx-auto max-w-5xl px-4 py-8 flex-grow">
-        {/* Event Hero Section */}
+        {/* Dynamic Event Hero Section */}
         <div className="relative rounded-2xl overflow-hidden shadow-lg mb-8">
           <div className="relative h-[350px]">
             <img 
-              src="https://images.unsplash.com/photo-1540575861501-7ad05823c9f5?auto=format&fit=crop&w=1200&q=80" 
+              src={currentEvent.eventImage} 
               className="w-full h-full object-cover" 
-              alt="Tech Symposium"
+              alt={currentEvent.eventName}
             />
-            {/* Dark Overlay with custom background image injected behind text */}
+            {/* Dark Overlay with background image blurred behind text */}
             <div 
               style={{
                 backgroundImage: 'url("https://static.vecteezy.com/system/resources/thumbnails/049/484/649/small/blurred-crowd-at-a-concert-with-stage-lights-photo.jpg")'
@@ -38,13 +52,13 @@ const EventRegister = () => {
               className="absolute inset-0 bg-black/50 bg-blend-overlay bg-cover bg-center flex flex-col justify-center px-12"
             >
               <span className="bg-[#137fec] text-white text-[10px] font-bold px-3 py-1 rounded-full w-fit mb-4 uppercase tracking-widest">
-                Upcoming Event
+                {currentEvent.category}
               </span>
               <h1 className="text-white text-4xl md:text-5xl font-black mb-4 tracking-tight">
-                Annual Tech Symposium 2024
+                {currentEvent.eventName}
               </h1>
               <p className="text-slate-200 max-w-2xl text-lg leading-relaxed font-medium">
-                Join us for a day of innovation, networking, and industry-leading keynotes from tech visionaries.
+                Join us for an exciting day of activity, connection, and community interaction live at the university campus layout.
               </p>
             </div>
           </div>
@@ -57,7 +71,7 @@ const EventRegister = () => {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase">Date & Time</p>
-                <p className="text-sm font-bold text-slate-800">Oct 25, 2024 • 10:00 AM</p>
+                <p className="text-sm font-bold text-slate-800">{currentEvent.date} • {currentEvent.time}</p>
               </div>
             </div>
             <div className="flex items-center gap-4 p-6 border-r border-slate-100">
@@ -66,7 +80,7 @@ const EventRegister = () => {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase">Venue</p>
-                <p className="text-sm font-bold text-slate-800">Main Auditorium, Block C</p>
+                <p className="text-sm font-bold text-slate-800">{currentEvent.venue}</p>
               </div>
             </div>
             <div className="flex items-center gap-4 p-6">
@@ -75,7 +89,7 @@ const EventRegister = () => {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase">Capacity</p>
-                <p className="text-sm font-bold text-slate-800">500 Seats Available</p>
+                <p className="text-sm font-bold text-slate-800">Limited Seats Available</p>
               </div>
             </div>
           </div>
@@ -85,7 +99,7 @@ const EventRegister = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="p-10">
             <h2 className="text-2xl font-black text-slate-900 mb-2">Registration Form</h2>
-            <p className="text-slate-500 mb-10">Please confirm your details to reserve your spot at the symposium.</p>
+            <p className="text-slate-500 mb-10">Please confirm your details to reserve your spot at this event.</p>
 
             <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
