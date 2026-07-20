@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Contact = () => {
-  // Track user session status to dynamically show page links
+  const navigate = useNavigate();
+  // Track user session status to dynamically show page links and auth states
   const [user, setUser] = useState(null);
 
   // Input State fields matching form data layout matrices
@@ -33,6 +34,12 @@ const Contact = () => {
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/login');
   };
 
   const handleSendMessage = async (e) => {
@@ -80,6 +87,7 @@ const Contact = () => {
           </div>
           <span className="text-xl font-bold">UniEvents</span>
         </div>
+        
         <div className="flex items-center gap-8">
           <nav className="flex gap-6 text-sm font-medium items-center">
             <Link to="/" className="text-slate-500 hover:text-[#137fec] transition-colors">Home</Link>
@@ -92,7 +100,34 @@ const Contact = () => {
               </Link>
             )}
           </nav>
-          <Link to="/login" className="bg-[#137fec] text-white px-6 py-2 rounded-lg font-bold text-sm">Login</Link>
+
+          {/* Dynamic Authentication Actions Panel */}
+          {user ? (
+            <div className="flex items-center gap-4 pl-4 border-l border-slate-200">
+              <div className="flex items-center gap-2">
+                <img 
+                  src={`https://ui-avatars.com/api/?name=${user.full_name || 'User'}&background=137fec&color=fff&bold=true`} 
+                  alt="Profile" 
+                  className="h-9 w-9 rounded-full border-2 border-white shadow-sm"
+                />
+                <div className="hidden lg:block text-left">
+                  <p className="text-xs font-black text-slate-900 leading-none">{user.full_name}</p>
+                  <p className="text-[10px] text-slate-400 font-medium">{user.email}</p>
+                </div>
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-all font-bold text-xs"
+              >
+                <span className="material-symbols-outlined text-sm">logout</span>
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="bg-[#137fec] text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-[#116ecf] transition-all">
+              Login
+            </Link>
+          )}
         </div>
       </header>
 
