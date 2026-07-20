@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Contact = () => {
+  // Track user session status to dynamically show page links
+  const [user, setUser] = useState(null);
+
   // Input State fields matching form data layout matrices
   const [formData, setFormData] = useState({
     firstName: '',
@@ -20,6 +23,13 @@ const Contact = () => {
     title: '',
     message: ''
   });
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -71,9 +81,16 @@ const Contact = () => {
           <span className="text-xl font-bold">UniEvents</span>
         </div>
         <div className="flex items-center gap-8">
-          <nav className="flex gap-6 text-sm font-medium">
+          <nav className="flex gap-6 text-sm font-medium items-center">
             <Link to="/" className="text-slate-500 hover:text-[#137fec] transition-colors">Home</Link>
             <Link to="/contact" className="text-[#137fec]">Contact Us</Link>
+            
+            {/* Dynamic Page Link: Displays Only If User Session Is Found */}
+            {user && (
+              <Link to="/my-registrations" className="text-slate-500 hover:text-[#137fec] transition-colors">
+                My Registrations
+              </Link>
+            )}
           </nav>
           <Link to="/login" className="bg-[#137fec] text-white px-6 py-2 rounded-lg font-bold text-sm">Login</Link>
         </div>
