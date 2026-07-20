@@ -203,14 +203,24 @@ const Home = () => {
                             {event.venue}
                           </div>
                         </div>
-                        {/* Passes event data object down to EventRegister context route */}
-                        <Link 
-                          to="/event-register" 
-                          state={{ event }}
-                          className="block w-full text-center mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all"
-                        >
-                          Register
-                        </Link>
+                        
+                        {/* Conditional Registration Route Interceptor */}
+                        {user ? (
+                          <Link 
+                            to="/event-register" 
+                            state={{ event }}
+                            className="block w-full text-center mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all"
+                          >
+                            Register
+                          </Link>
+                        ) : (
+                          <Link 
+                            to="/login" 
+                            className="block w-full text-center mt-6 py-2.5 rounded-xl bg-orange-50 text-orange-600 font-extrabold text-sm border border-orange-200/50 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all uppercase tracking-tight"
+                          >
+                            Login for event registration
+                          </Link>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -257,11 +267,20 @@ const Home = () => {
                         }}
                         onMouseMove={(e) => dayEvent && handleMouseMove(e)}
                         onMouseLeave={() => setHoveredEvent(null)}
-                        className={`py-2 rounded-lg transition-all relative cursor-default ${
+                        className={`py-2 rounded-lg transition-all relative ${
                           dayEvent 
-                            ? 'bg-[#137fec] text-white font-black shadow-sm' 
-                            : 'hover:bg-slate-50 text-slate-800 font-medium'
+                            ? 'bg-[#137fec] text-white font-black shadow-sm cursor-pointer' 
+                            : 'hover:bg-slate-50 text-slate-800 font-medium cursor-default'
                         }`}
+                        onClick={() => {
+                          if (dayEvent) {
+                            if (user) {
+                              navigate('/event-register', { state: { event: dayEvent } });
+                            } else {
+                              navigate('/login');
+                            }
+                          }
+                        }}
                       >
                         {dayNum}
                       </div>
@@ -314,6 +333,11 @@ const Home = () => {
               {hoveredEvent.venue}
             </div>
           </div>
+          {!user && (
+            <div className="mt-2 pt-2 border-t border-slate-800 text-[10px] font-bold text-orange-400 uppercase tracking-tighter">
+              ⚠️ Authentication Required To Open
+            </div>
+          )}
         </div>
       )}
 
