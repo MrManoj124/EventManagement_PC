@@ -4,12 +4,10 @@ import { Link, useLocation } from 'react-router-dom';
 const EventRegister = () => {
   const location = useLocation();
   
-  // Force the browser window viewport context to snap perfectly to the absolute top position metric upon route mounting
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Extract passed routing metadata or apply beautiful initial hardcoded defaults as a fallback
   const passedEvent = location.state?.event;
 
   const currentEvent = {
@@ -33,9 +31,8 @@ const EventRegister = () => {
         </div>
         <nav className="flex items-center gap-8">
           <Link to="/" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Home</Link>
-          <Link to="/my-registrations" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">My Registrations</Link>
           <div className="h-10 w-10 rounded-full overflow-hidden border border-slate-200">
-            <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=e2e8f0&color=475569" alt="User" />
+            <img src="https://ui-avatars.com/api/?name=User&background=e2e8f0&color=475569" alt="User" />
           </div>
         </nav>
       </header>
@@ -49,7 +46,6 @@ const EventRegister = () => {
               className="w-full h-full object-cover" 
               alt={currentEvent.eventName}
             />
-            {/* Dark Overlay with background image blurred behind text */}
             <div 
               style={{
                 backgroundImage: 'url("https://static.vecteezy.com/system/resources/thumbnails/049/484/649/small/blurred-crowd-at-a-concert-with-stage-lights-photo.jpg")'
@@ -108,7 +104,6 @@ const EventRegister = () => {
 
             <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Full Name */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Full Name</label>
                   <input 
@@ -117,7 +112,6 @@ const EventRegister = () => {
                     type="text"
                   />
                 </div>
-                {/* Email */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">University Email</label>
                   <input 
@@ -126,7 +120,6 @@ const EventRegister = () => {
                     type="email"
                   />
                 </div>
-                {/* Department */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Department</label>
                   <select className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 text-sm appearance-none">
@@ -136,7 +129,6 @@ const EventRegister = () => {
                     <option>Business</option>
                   </select>
                 </div>
-                {/* Batch */}
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Year / Batch</label>
                   <select className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 text-sm appearance-none">
@@ -147,7 +139,6 @@ const EventRegister = () => {
                 </div>
               </div>
 
-              {/* Information Alert */}
               <div className="bg-[#f0f9ff] border border-blue-100 p-6 rounded-xl flex gap-4">
                 <span className="material-symbols-outlined text-[#137fec]">info</span>
                 <p className="text-xs text-slate-600 leading-relaxed font-medium">
@@ -167,7 +158,6 @@ const EventRegister = () => {
         </div>
       </main>
 
-      {/* Small Footer Icons */}
       <footer className="py-12 flex flex-col items-center gap-6">
         <div className="flex gap-8 text-slate-400">
           <span className="material-symbols-outlined hover:text-[#137fec] cursor-pointer">help</span>

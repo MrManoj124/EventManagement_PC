@@ -88,6 +88,13 @@ const Home = () => {
             <Link to="/" className="text-sm font-medium text-[#137fec]">Home</Link>
             <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Contact Us</Link>
             
+            {/* My Registrations Link - Visible only if logged in */}
+            {user && (
+              <Link to="/my-registrations" className="text-sm font-medium text-slate-600 hover:text-[#137fec] transition-colors">
+                My Registrations
+              </Link>
+            )}
+            
             {user ? (
               <div className="flex items-center gap-4 pl-4 border-l border-slate-200">
                 <div className="flex items-center gap-2">
