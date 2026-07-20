@@ -7,6 +7,7 @@ import Contact from './pages/Contact';   // Create this using your contact HTML
 import EventRegister from './pages/EventRegister';
 import AddEvent from './pages/AddEvent'; 
 import ForgotPassword from './pages/ForgotPassword'; 
+import MyRegistrations from './pages/MyRegistrations'; // Imported the registrations screen component
 
 function App() {
   return (
@@ -19,10 +20,11 @@ function App() {
         <Route path="/event-register" element={<EventRegister />} />
         <Route path="/add-event" element={<AddEvent />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* Wired up the personal registration tracking list route */}
+        <Route path="/my-registrations" element={<MyRegistrations />} />
       </Routes>
     </Router>
   );
 }
 
-export default App;
-
+export default App; 
