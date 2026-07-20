@@ -216,7 +216,7 @@ const Home = () => {
                         ) : (
                           <Link 
                             to="/login" 
-                            className="block w-full text-center mt-6 py-2.5 rounded-xl bg-orange-50 text-orange-600 font-extrabold text-sm border border-orange-200/50 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all uppercase tracking-tight"
+                            className="block w-full text-center mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all"
                           >
                             Login for event registration
                           </Link>
