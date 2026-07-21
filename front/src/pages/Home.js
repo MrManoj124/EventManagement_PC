@@ -9,7 +9,6 @@ const Home = () => {
   const [mousePos, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
 
-  // Dynamic Date Engine state variables
   const [currentDate, setCurrentDate] = useState(new Date()); 
   const currentMonth = currentDate.getMonth(); 
   const currentYear = currentDate.getFullYear();
@@ -74,7 +73,7 @@ const Home = () => {
 
   return (
     <div className="bg-[#f6f7f8] min-h-screen font-display">
-      {/* Header with Dynamic Login/Profile State */}
+      {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 lg:px-8">
           <div className="flex items-center gap-2">
@@ -88,7 +87,12 @@ const Home = () => {
             <Link to="/" className="text-sm font-medium text-[#137fec]">Home</Link>
             <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Contact Us</Link>
             
-            {/* My Registrations Link - Visible only if logged in */}
+            {/* Campus Info & Guidelines Link */}
+            <Link to="/campus-info" className="text-sm font-medium text-slate-600 hover:text-[#137fec] transition-colors">
+              Campus Info & Guidelines
+            </Link>
+
+            {/* My Registrations Link */}
             {user && (
               <Link to="/my-registrations" className="text-sm font-medium text-slate-600 hover:text-[#137fec] transition-colors">
                 My Registrations
@@ -211,7 +215,6 @@ const Home = () => {
                           </div>
                         </div>
                         
-                        {/* Conditional Registration Route Interceptor */}
                         {user ? (
                           <Link 
                             to="/event-register" 
@@ -309,7 +312,7 @@ const Home = () => {
         </section>
       </main>
 
-      {/* Precision Floating Tooltip */}
+      {/* Floating Tooltip */}
       {hoveredEvent && (
         <div 
           className="fixed pointer-events-none bg-slate-900 text-white p-4 rounded-xl shadow-2xl z-[9999] border border-slate-800 text-left max-w-xs w-64 transition-transform duration-75 ease-out"
@@ -363,19 +366,16 @@ const Home = () => {
           <div>
             <h4 className="font-bold mb-6">Navigation</h4>
             <ul className="space-y-3 text-sm text-slate-500">
-              <li><Link to="#">All Events</Link></li>
-              <li><Link to="#">Campus Map</Link></li>
-              <li><Link to="#">Guidelines</Link></li>
-              <li><Link to="#">FAQ</Link></li>
+              <li><Link to="/" className="hover:text-[#137fec]">All Events</Link></li>
+              <li><Link to="/campus-info" className="hover:text-[#137fec]">Campus Map</Link></li>
+              <li><Link to="/campus-info" className="hover:text-[#137fec]">Guidelines</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold mb-6">Admin</h4>
             <ul className="space-y-3 text-sm text-slate-500">
-              <li>Admin Login</li>
-              <li>Create Event</li>
-              <li>Analytics</li>
-              <li>Support</li>
+              <li><Link to="/login" className="hover:text-[#137fec]">Admin Login</Link></li>
+              <li><Link to="/add-event" className="hover:text-[#137fec]">Create Event</Link></li>
             </ul>
           </div>
           <div>
