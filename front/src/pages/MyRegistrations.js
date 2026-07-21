@@ -23,7 +23,6 @@ const MyRegistrations = () => {
 
   const fetchUserRegistrations = async (studentEmail) => {
     try {
-      // Adjust endpoint string to match your registration lookup API if necessary
       const response = await axios.get(`http://localhost:5000/api/registrations/student/${studentEmail}`);
       setRegisteredEvents(response.data);
     } catch (error) {
@@ -115,35 +114,35 @@ const MyRegistrations = () => {
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-3">
                     <span className="px-2.5 py-1 rounded bg-blue-50 text-[#137fec] text-[9px] font-black uppercase tracking-wider">
-                      {registration.Event?.category || "Category"}
+                      {registration.eventCategory || "Event"}
                     </span>
                     <span className="text-[10px] text-green-600 font-black bg-green-50 px-2 py-0.5 rounded uppercase tracking-wide flex items-center gap-0.5 border border-green-200/40">
                       <span className="material-symbols-outlined text-xs">verified</span> Confirmed
                     </span>
                   </div>
                   <h3 className="font-black text-slate-900 text-xl tracking-tight leading-tight mb-4">
-                    {registration.Event?.eventName || registration.eventName}
+                    {registration.eventName}
                   </h3>
                   
                   <div className="space-y-2 text-xs font-bold text-slate-500">
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-sm text-[#137fec]">calendar_today</span> 
-                      {registration.Event?.date || "Date N/A"}
+                      {registration.eventDate || "Date N/A"}
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-sm text-[#137fec]">schedule</span> 
-                      {registration.Event?.time || "Time N/A"}
+                      {registration.eventTime || "Time N/A"}
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-sm text-[#137fec]">location_on</span> 
-                      {registration.Event?.venue || "Venue N/A"}
+                      {registration.eventVenue || "Venue N/A"}
                     </div>
                   </div>
                 </div>
                 
                 <div className="bg-[#f8fafc] border-t border-slate-100 px-6 py-4 flex justify-between items-center text-[11px] text-slate-400 font-bold">
                   <span>Pass ID: #{registration.id?.toString().padStart(5, '0')}</span>
-                  <span className="text-[#137fec]">View Digital Ticket →</span>
+                  <span className="text-[#137fec]">Registered Student: {registration.fullName}</span>
                 </div>
               </div>
             ))}
