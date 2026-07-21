@@ -123,10 +123,10 @@ const EventRegister = () => {
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Department</label>
                   <select className="w-full px-4 py-3.5 bg-[#f8fafc] border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#137fec] outline-none text-slate-900 text-sm appearance-none">
-                    <option>Select your department</option>
-                    <option>ICT</option>
-                    <option>Engineering</option>
-                    <option>Business</option>
+                    <option>Select your faculty</option>
+                    <option>Applied Science</option>
+                    <option>Business Studies</option>
+                    <option>Technology</option>
                   </select>
                 </div>
                 <div>
