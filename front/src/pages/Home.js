@@ -372,10 +372,10 @@ const Home = () => {
           <div>
             <h4 className="font-bold mb-6">Admin</h4>
             <ul className="space-y-3 text-sm text-slate-500">
-              <li><Link to="/login">Admin Login</Link></li>
-              <li><Link to="/add-event">Create Event</Link></li>
-              <li><Link to="#">Analytics</Link></li>
-              <li><Link to="#">Support</Link></li>
+              <li>Admin Login</li>
+              <li>Create Event</li>
+              <li>Analytics</li>
+              <li>Support</li>
             </ul>
           </div>
           <div>
