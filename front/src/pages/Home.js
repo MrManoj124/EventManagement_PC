@@ -71,6 +71,10 @@ const Home = () => {
     });
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="bg-[#f6f7f8] min-h-screen font-display">
       {/* Header */}
@@ -84,7 +88,7 @@ const Home = () => {
           </div>
           
           <nav className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-sm font-medium text-[#137fec]">Home</Link>
+            <Link to="/" onClick={scrollToTop} className="text-sm font-medium text-[#137fec]">Home</Link>
             <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Contact Us</Link>
             
             {/* Campus Info & Guidelines Link */}
@@ -366,7 +370,11 @@ const Home = () => {
           <div>
             <h4 className="font-bold mb-6">Navigation</h4>
             <ul className="space-y-3 text-sm text-slate-500">
-              <li><Link to="/" className="hover:text-[#137fec]">All Events</Link></li>
+              <li>
+                <Link to="/" onClick={scrollToTop} className="hover:text-[#137fec]">
+                  All Events
+                </Link>
+              </li>
               <li><Link to="/campus-info" className="hover:text-[#137fec]">Campus Map</Link></li>
               <li><Link to="/campus-info" className="hover:text-[#137fec]">Guidelines</Link></li>
             </ul>
