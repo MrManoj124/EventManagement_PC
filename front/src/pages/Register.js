@@ -23,6 +23,13 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    // Standard Email Format Validation Regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      alert("Please enter a valid email address format (e.g., student@university.edu).");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
@@ -201,4 +208,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Register; 
