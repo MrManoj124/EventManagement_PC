@@ -17,8 +17,8 @@ router.post('/send', async (req, res) => {
       port: 465,
       secure: true,
       auth: {
-        user: 'kabijakep@gmail.com', // Replace with your institutional Gmail account
-        pass: 'xhro rtrj xqdx nukq'  // Replace with your generated 16-character Google App Password
+        user: 'youremail@gmail.com', // Replace with your institutional Gmail account
+        pass: 'xxxx xxxx xxxx xxxx'  // Replace with your generated 16-character Google App Password
       }
     });
 
