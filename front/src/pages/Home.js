@@ -89,15 +89,21 @@ const Home = () => {
           
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/" onClick={scrollToTop} className="text-sm font-medium text-[#137fec]">Home</Link>
-            <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Contact Us</Link>
+            
+            {/* Contact Us Link - Hidden when logged-in user is an admin */}
+            {(!user || user.role !== 'admin') && (
+              <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">
+                Contact Us
+              </Link>
+            )}
             
             {/* Campus Info & Guidelines Link */}
             <Link to="/campus-info" className="text-sm font-medium text-slate-600 hover:text-[#137fec] transition-colors">
               Campus Info & Guidelines
             </Link>
 
-            {/* My Registrations Link */}
-            {user && (
+            {/* My Registrations Link - Hidden when logged-in user is an admin */}
+            {user && user.role !== 'admin' && (
               <Link to="/my-registrations" className="text-sm font-medium text-slate-600 hover:text-[#137fec] transition-colors">
                 My Registrations
               </Link>

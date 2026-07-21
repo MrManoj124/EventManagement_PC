@@ -92,7 +92,10 @@ const Contact = () => {
           <nav className="flex gap-6 text-sm font-medium items-center">
             <Link to="/" className="text-slate-500 hover:text-[#137fec] transition-colors">Home</Link>
             <Link to="/contact" className="text-[#137fec]">Contact Us</Link>
-            
+             {/* Campus Info & Guidelines Link */}
+            <Link to="/campus-info" className="text-sm font-medium text-slate-600 hover:text-[#137fec] transition-colors">
+               Campus Info & Guidelines
+            </Link>
             {/* Dynamic Page Link: Displays Only If User Session Is Found */}
             {user && (
               <Link to="/my-registrations" className="text-slate-500 hover:text-[#137fec] transition-colors">

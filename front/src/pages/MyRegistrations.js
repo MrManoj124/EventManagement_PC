@@ -100,7 +100,10 @@ const MyRegistrations = () => {
           
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Home</Link>
-            <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Contact Us</Link>
+            <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Contact Us</Link> 
+            <Link to="/campus-info" className="text-sm font-medium text-slate-600 hover:text-[#137fec] transition-colors">
+                Campus Info & Guidelines
+            </Link>
             <Link to="/my-registrations" className="text-sm font-medium text-[#137fec]">My Registrations</Link>
             
             <div className="flex items-center gap-4 pl-4 border-l border-slate-200">

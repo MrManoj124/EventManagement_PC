@@ -59,10 +59,18 @@ const CampusInfo = () => {
           
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Home</Link>
-            <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">Contact Us</Link>
+            
+            {/* Contact Us Link - Hidden when logged-in user is an admin */}
+            {(!user || user.role !== 'admin') && (
+              <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">
+                Contact Us
+              </Link>
+            )}
+
             <Link to="/campus-info" className="text-sm font-medium text-[#137fec]">Campus Info & Guidelines</Link>
             
-            {user && (
+            {/* My Registrations Link - Hidden when logged-in user is an admin */}
+            {user && user.role !== 'admin' && (
               <Link to="/my-registrations" className="text-sm font-medium text-slate-600 hover:text-[#137fec]">
                 My Registrations
               </Link>
@@ -123,7 +131,7 @@ const CampusInfo = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Embedded Google Map iframe replaces static image */}
+            {/* Embedded Google Map iframe */}
             <div className="lg:col-span-2 rounded-xl overflow-hidden border border-slate-200 min-h-[380px] shadow-inner bg-slate-100 relative">
               <iframe
                 title="University of Vavuniya Campus Map"
