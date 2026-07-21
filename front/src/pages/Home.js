@@ -374,8 +374,8 @@ const Home = () => {
           <div>
             <h4 className="font-bold mb-6">Admin</h4>
             <ul className="space-y-3 text-sm text-slate-500">
-              <li><Link to="/login" className="hover:text-[#137fec]">Admin Login</Link></li>
-              <li><Link to="/add-event" className="hover:text-[#137fec]">Create Event</Link></li>
+              <li><Link to="#" className="hover:text-[#137fec]">Admin Login</Link></li>
+              <li><Link to="#" className="hover:text-[#137fec]">Create Event</Link></li>
             </ul>
           </div>
           <div>
