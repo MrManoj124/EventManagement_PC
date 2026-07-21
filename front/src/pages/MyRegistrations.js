@@ -8,6 +8,20 @@ const MyRegistrations = () => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Custom Cancellation Confirmation Modal State
+  const [cancelModal, setCancelModal] = useState({
+    isOpen: false,
+    targetId: null,
+    eventName: ''
+  });
+
+  // Success Notification Modal Overlay State
+  const [successModal, setSuccessModal] = useState({
+    isOpen: false,
+    title: '',
+    message: ''
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
     const savedUser = localStorage.getItem('user');
@@ -35,6 +49,39 @@ const MyRegistrations = () => {
   const handleLogout = () => {
     localStorage.removeItem('user');
     navigate('/login');
+  };
+
+  // Open confirmation modal for cancellation
+  const initiateCancel = (id, eventName) => {
+    setCancelModal({
+      isOpen: true,
+      targetId: id,
+      eventName
+    });
+  };
+
+  // Process registration deletion API call
+  const confirmCancelRegistration = async () => {
+    const { targetId, eventName } = cancelModal;
+    if (!targetId) return;
+
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/registrations/${targetId}`);
+      if (response.status === 200) {
+        setCancelModal({ isOpen: false, targetId: null, eventName: '' });
+        // Update local state by filtering out cancelled registration
+        setRegisteredEvents(prev => prev.filter(item => item.id !== targetId));
+
+        setSuccessModal({
+          isOpen: true,
+          title: "Registration Cancelled",
+          message: `Your reservation for "${eventName}" has been cancelled successfully.`
+        });
+      }
+    } catch (error) {
+      setCancelModal({ isOpen: false, targetId: null, eventName: '' });
+      alert(error.response?.data?.error || "Failed to cancel registration. Please try again.");
+    }
   };
 
   if (!user) return null;
@@ -124,7 +171,7 @@ const MyRegistrations = () => {
                     {registration.eventName}
                   </h3>
                   
-                  <div className="space-y-2 text-xs font-bold text-slate-500">
+                  <div className="space-y-2 text-xs font-bold text-slate-500 mb-6">
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-sm text-[#137fec]">calendar_today</span> 
                       {registration.eventDate || "Date N/A"}
@@ -138,6 +185,15 @@ const MyRegistrations = () => {
                       {registration.eventVenue || "Venue N/A"}
                     </div>
                   </div>
+
+                  {/* Cancel Button with Red Background & White Text */}
+                  <button
+                    onClick={() => initiateCancel(registration.id, registration.eventName)}
+                    className="w-full py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-red-500/20 active:scale-[0.98]"
+                  >
+                    <span className="material-symbols-outlined text-sm">cancel</span>
+                    Cancel Registration
+                  </button>
                 </div>
                 
                 <div className="bg-[#f8fafc] border-t border-slate-100 px-6 py-4 flex justify-between items-center text-[11px] text-slate-400 font-bold">
@@ -149,6 +205,54 @@ const MyRegistrations = () => {
           </div>
         )}
       </main>
+
+      {/* Cancel Confirmation Modal Overlay */}
+      {cancelModal.isOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[150] px-4 animate-fadeIn">
+          <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-slate-200">
+            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="material-symbols-outlined text-4xl">warning</span>
+            </div>
+            <h2 className="text-xl font-black text-slate-900 mb-2">Cancel Registration?</h2>
+            <p className="text-slate-500 mb-6 text-sm font-medium leading-relaxed">
+              Are you sure you want to cancel your reservation for <span className="font-bold text-slate-800">"{cancelModal.eventName}"</span>? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setCancelModal({ isOpen: false, targetId: null, eventName: '' })}
+                className="w-1/3 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 text-sm transition-all"
+              >
+                Keep
+              </button>
+              <button 
+                onClick={confirmCancelRegistration}
+                className="w-2/3 bg-red-500 text-white font-black py-3 rounded-xl hover:bg-red-600 text-sm transition-all shadow-lg shadow-red-500/20"
+              >
+                Yes, Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Notification Modal Overlay */}
+      {successModal.isOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[200] px-4 animate-fadeIn">
+          <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl border border-slate-100">
+            <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="material-symbols-outlined text-4xl">check_circle</span>
+            </div>
+            <h2 className="text-xl font-black text-slate-900 mb-2">{successModal.title}</h2>
+            <p className="text-slate-500 mb-6 text-sm font-medium leading-relaxed">{successModal.message}</p>
+            <button 
+              onClick={() => setSuccessModal({ isOpen: false, title: '', message: '' })}
+              className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition-all active:scale-95"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="py-12 flex flex-col items-center gap-6 border-t border-slate-200 bg-white mt-20">
