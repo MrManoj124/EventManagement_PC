@@ -123,18 +123,16 @@ const CampusInfo = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 rounded-xl overflow-hidden border border-slate-200 relative bg-slate-100 min-h-[320px] flex items-center justify-center">
-              <img 
-                src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=1200&auto=format&fit=crop&q=80" 
-                alt="Campus Map Visual" 
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-slate-900/30 flex items-end p-6">
-                <div className="bg-white/95 backdrop-blur-md p-4 rounded-xl shadow-lg border border-slate-100 max-w-md">
-                  <p className="text-xs font-black text-[#137fec] uppercase tracking-wider mb-1">University Campus Navigation</p>
-                  <p className="text-xs text-slate-600 font-medium">Use the directory list to identify venue zones and registration check-in gates.</p>
-                </div>
-              </div>
+            {/* Embedded Google Map iframe replaces static image */}
+            <div className="lg:col-span-2 rounded-xl overflow-hidden border border-slate-200 min-h-[380px] shadow-inner bg-slate-100 relative">
+              <iframe
+                title="University of Vavuniya Campus Map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2026308.6306113466!2d79.36029654081022!3d7.282413186142438!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3afc3f3a01dd2393%3A0xe31eaf7e0d5bcecd!2sUniversity%20of%20Vavuniya!5e0!3m2!1sen!2slk!4v1784650981231!5m2!1sen!2slk"
+                className="w-full h-full min-h-[380px] border-0"
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
             </div>
 
             <div className="space-y-3">
