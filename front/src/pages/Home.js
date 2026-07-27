@@ -225,14 +225,17 @@ const Home = () => {
                           </div>
                         </div>
                         
+                        {/* Event Action Button - Hidden for Admins */}
                         {user ? (
-                          <Link 
-                            to="/event-register" 
-                            state={{ event }}
-                            className="block w-full text-center mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all"
-                          >
-                            Register
-                          </Link>
+                          user.role !== 'admin' && (
+                            <Link 
+                              to="/event-register" 
+                              state={{ event }}
+                              className="block w-full text-center mt-6 py-2.5 rounded-xl bg-[#137fec]/10 text-[#137fec] font-bold text-sm hover:bg-[#137fec] hover:text-white transition-all"
+                            >
+                              Register
+                            </Link>
+                          )
                         ) : (
                           <Link 
                             to="/login" 
@@ -295,7 +298,9 @@ const Home = () => {
                         onClick={() => {
                           if (dayEvent) {
                             if (user) {
-                              navigate('/event-register', { state: { event: dayEvent } });
+                              if (user.role !== 'admin') {
+                                navigate('/event-register', { state: { event: dayEvent } });
+                              }
                             } else {
                               navigate('/login');
                             }
