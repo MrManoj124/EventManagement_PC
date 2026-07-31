@@ -11,7 +11,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // 1. Admin Default Login Check (Hardcoded as requested)
+    // 1. Admin Default Login Check (Hardcoded as requested).
     if (email === 'admin@university.com' && password === 'admin123') {
       const adminData = {
         full_name: 'Admin User',
@@ -38,7 +38,7 @@ const Login = () => {
       }
     } catch (error) {
       // Handle error (e.g., user not found or wrong password)
-      alert(error.response?.data?.message || "Login failed. Please check your credentials.");
+      alert(error.response?.data?.message || "Login failed. Please check your credentials!.");
     }
   };
 
