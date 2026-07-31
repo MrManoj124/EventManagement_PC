@@ -21,7 +21,7 @@ const CampusInfo = () => {
 
   const locations = [
     { name: 'Main Auditorium (Block C)', category: 'Events & Keynotes', icon: 'theater_comedy', zone: 'Academic Zone 1' },
-    { name: 'ICT Lab Complex', category: 'Workshops & Hackathons', icon: 'computer', zone: 'Technology Block' },
+    { name: 'ICT Lab Complex ', category: 'Workshops & Hackathons', icon: 'computer', zone: 'Technology Block' },
     { name: 'University Sports Ground', category: 'Sports & Cultural Fests', icon: 'sports_soccer', zone: 'Recreation Complex' },
     { name: 'Administration Center', category: 'Helpdesk & Passes', icon: 'corporate_fare', zone: 'Main Entrance' }
   ];
