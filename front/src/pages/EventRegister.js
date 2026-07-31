@@ -277,6 +277,8 @@ const EventRegister = () => {
         </div>
       )}
 
+      
+
       <footer className="py-12 flex flex-col items-center gap-6">
         <div className="flex gap-8 text-slate-400">
           <span className="material-symbols-outlined hover:text-[#137fec] cursor-pointer">help</span>
