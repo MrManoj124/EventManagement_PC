@@ -150,7 +150,7 @@ const Contact = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">First Name</label>
-                  <input name="firstName" value={formData.firstName} onChange={handleInputChange} type="text" placeholder="Jane" className="w-full border rounded-xl p-3 outline-none focus:border-[#137fec] bg-[#f8fafc] text-sm" required />
+                  <input name="firstName" value={formData.firstName} onChange={handleInputChange} type="text" placeholder="John" className="w-full border rounded-xl p-3 outline-none focus:border-[#137fec] bg-[#f8fafc] text-sm" required />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Last Name</label>
@@ -159,7 +159,7 @@ const Contact = () => {
               </div>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Email Address</label>
-                <input name="email" value={formData.email} onChange={handleInputChange} type="email" placeholder="jane.doe@university.edu" className="w-full border rounded-xl p-3 outline-none focus:border-[#137fec] bg-[#f8fafc] text-sm" required />
+                <input name="email" value={formData.email} onChange={handleInputChange} type="email" placeholder="john.doe@university.edu" className="w-full border rounded-xl p-3 outline-none focus:border-[#137fec] bg-[#f8fafc] text-sm" required />
               </div>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Inquiry Type</label>
